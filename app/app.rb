@@ -1,10 +1,16 @@
 class App < Sinatra::Base
   configure do
     set :public_folder, 'public'
+    set :root, File.expand_path('../../', __FILE__)
+    set :views, File.join(root, '/assets/slim/')
+  end
+
+  def include_slim(name, options = {}, &block)
+    Slim::Template.new("#{name}.slim", options).render(self, &block)
   end
 
   get "/" do
-    slim :index    
+    slim :index, layout: :layout
   end
 
   not_found do
