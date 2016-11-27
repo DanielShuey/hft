@@ -117,14 +117,14 @@
 			backgroundColor: null,
 
 			borderColor: null,
-			borderThickness: 2, //in pixels
-			cornerRadius: 5, // in pixels
+			borderThickness: 1, //in pixels
+			cornerRadius: 0, // in pixels
 
-			fontSize: 14, // in pixels
-			fontColor: "#000000",
-			fontFamily: "Calibri, Arial, Georgia, serif;",
+			fontSize: 12, // in pixels
+			fontColor: "#fff",
+			fontFamily: "Roboto Mono",
 			fontWeight: "normal", //normal, bold, bolder, lighter,
-			fontStyle: "italic"  // normal, italic, oblique
+			fontStyle: "normal"  // normal, italic, oblique
 		},
 
 		Axis: {
@@ -7554,9 +7554,9 @@
 
 
 					//var borderThickness = Math.max(2, ((barWidth * .1) / 2 << 0) * 2); // Set only even numbers for border
-					var borderThickness = Math.round(Math.max(1, (barWidth * .15)));
+					//var borderThickness = Math.round(Math.max(1, (barWidth * .15)));
 					//borderThickness = (borderThickness / 2 << 0) * 2;
-					//borderThickness = 2;
+					borderThickness = 1;
 					var offset = borderThickness % 2 === 0 ? 0 : .5;
 
 					var id = dataSeries.dataPointIds[i];
@@ -13348,7 +13348,7 @@
 					}
 
 					try {
-						this.contentDiv.style.background = this.backgroundColor ? this.backgroundColor : isCanvasSupported ? "rgba(255,255,255,.9)" : "rgb(255,255,255)";
+						this.contentDiv.style.background = this.backgroundColor ? this.backgroundColor : isCanvasSupported ? "rgba(0,0,0,0.75)" : "rgb(0,0,0)";
 
 						this.contentDiv.style.borderRightColor = this.contentDiv.style.borderLeftColor = this.contentDiv.style.borderColor = this.borderColor ? this.borderColor : entries[0].dataPoint.color ? entries[0].dataPoint.color : entries[0].dataSeries.color ? entries[0].dataSeries.color : entries[0].dataSeries._colorSet[entries[0].index % entries[0].dataSeries._colorSet.length];
 

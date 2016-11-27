@@ -8,34 +8,22 @@ $orange: '#e76d3b'
 $red: '#cc3e4a'
 $green: '#84b547'
 
-/* General
+// General
 
 body
   font-family: "Roboto Mono"
   font-size: 13px
 
-html, body, #wrapper
+html, body, .container
   margin: 0px
   padding: 0px
-  height: $screen-stretch
   background-color: #000
   color: #EFEFEF
-
-#content
   width: $screen-stretch
-  padding-left: 124px
   height: $screen-stretch
-  min-height: $screen-stretch
 
-/* Side Menu
-
+// Side Menu
 #sidebar
-  position: absolute
-  top: 0
-  left: 0
-  width: 124p
-  height: $screen-stretch
-  min-height: $screen-stretch
   background-color: #111
   li
     padding: 14px 0px 14px 0px
@@ -47,8 +35,16 @@ html, body, #wrapper
     &.active > a
       background-color: #000
 
-/* Chart
+// Chart
 
 #chart
-  width: $screen-stretch
-  height: $screen-stretch
+  canvas
+
+// Header
+
+#header
+  td
+    padding: 30px 0
+
+#footer
+

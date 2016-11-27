@@ -5191,32 +5191,19 @@ button.close {
 @media print {
   .hidden-print {
     display: none !important; } }
-/* General */
 body {
   font-family: "Roboto Mono";
   font-size: 13px; }
 
-html, body, #wrapper {
+html, body, .container {
   margin: 0px;
   padding: 0px;
-  height: 99.5%;
   background-color: #000;
-  color: #EFEFEF; }
-
-#content {
+  color: #EFEFEF;
   width: 99.5%;
-  padding-left: 124px;
-  height: 99.5%;
-  min-height: 99.5%; }
+  height: 99.5%; }
 
-/* Side Menu */
 #sidebar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 124p;
-  height: 99.5%;
-  min-height: 99.5%;
   background-color: #111; }
 #sidebar li {
   padding: 14px 0px 14px 0px; }
@@ -5228,9 +5215,7 @@ html, body, #wrapper {
 #sidebar li.active > a {
   background-color: #000; }
 
-/* Chart */
-#chart {
-  width: 99.5%;
-  height: 99.5%; }
+#header td {
+  padding: 30px 0; }
 
 /*# sourceMappingURL=app.css.map */

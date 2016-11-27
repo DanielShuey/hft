@@ -7,7 +7,7 @@ class App < Sinatra::Base
   end
 
   def include_slim(name, options = {}, &block)
-    Slim::Template.new("#{name}.slim", options).render(self, &block)
+    Slim::Template.new(File.join(settings.views, "#{name}.slim"), options).render(self, &block)
   end
 
   get "/" do

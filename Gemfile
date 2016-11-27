@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 gem 'rack'
 gem 'sinatra'
+gem 'sinatra-contrib'
 gem 'sass'
 gem 'slim'
 gem 'therubyracer'
