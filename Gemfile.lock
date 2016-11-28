@@ -34,6 +34,7 @@ GEM
       origin (~> 1.0)
       tzinfo (~> 0.3.29)
     moped (1.5.3)
+    moving_average (0.1.1)
     multi_json (1.12.1)
     origin (1.1.0)
     rack (1.6.4)
@@ -79,6 +80,7 @@ DEPENDENCIES
   coffee-script
   execjs
   mongoid
+  moving_average
   rack
   sass
   sinatra

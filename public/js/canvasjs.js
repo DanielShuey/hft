@@ -7557,6 +7557,7 @@
 					//var borderThickness = Math.round(Math.max(1, (barWidth * .15)));
 					//borderThickness = (borderThickness / 2 << 0) * 2;
 					borderThickness = 1;
+          candlestickBorderThickness = 0;
 					var offset = borderThickness % 2 === 0 ? 0 : .5;
 
 					var id = dataSeries.dataPointIds[i];
@@ -7581,7 +7582,7 @@
 						ctx.lineTo(x - offset, y3);
 						ctx.stroke();
 
-						drawRect(ctx, x1, Math.min(y1, y4), x2, Math.max(y1, y4), rising ? dataSeries.risingColor : dataSeries.fallingColor, borderThickness, rising ? dataSeries.risingColor : dataSeries.fallingColor, bevelEnabled, bevelEnabled, false, false, dataSeries.fillOpacity);
+						drawRect(ctx, x1, Math.min(y1, y4), x2, Math.max(y1, y4), rising ? dataSeries.risingColor : dataSeries.fallingColor, candlestickBorderThickness, rising ? dataSeries.risingColor : dataSeries.fallingColor, bevelEnabled, bevelEnabled, false, false, dataSeries.fillOpacity);
 
 
 						if (isCanvasSupported) {

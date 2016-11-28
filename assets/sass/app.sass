@@ -14,7 +14,7 @@ body
   font-family: "Roboto Mono"
   font-size: 13px
 
-html, body, .container
+html, body, #content
   margin: 0px
   padding: 0px
   background-color: #000
@@ -22,29 +22,32 @@ html, body, .container
   width: $screen-stretch
   height: $screen-stretch
 
+#content
+  display: block
+  box-sizing: border-box
+  padding-left: 145px
+
 // Side Menu
 #sidebar
-  background-color: #111
+  position: fixed
+  width: 125px
+  background-color: #000
   li
-    padding: 14px 0px 14px 0px
     a
       font-weight: 700
       font-size: 16px
       text-tranform: uppercase
       color: #fff
-    &.active > a
-      background-color: #000
+      text-align: center
+      &:hover, &:focus, &.active
+        background-color: #000
 
 // Chart
 
 #chart
-  canvas
 
 // Header
 
 #header
   td
     padding: 30px 0
-
-#footer
-
