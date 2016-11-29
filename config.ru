@@ -1,4 +1,7 @@
+# Load Path
 root = File.expand_path('..', __FILE__)
+$:.unshift root
+$:.unshift File.join(root, 'app')
 
 # Gems
 require 'rubygems'
@@ -25,9 +28,20 @@ Tilt::CoffeeScriptTemplate.default_bare = true
 # Slim
 Slim::Engine.set_options pretty: true, sort_attrs: false
 
-# App
-Dir[File.join(root, "/app/**/*.rb")].each do |file|
-  require file
+# Autoload
+class Object
+  def self.const_missing name
+    @autoload_files ||= Dir[File.join(File.expand_path('..', __FILE__), "/app/**/*.rb")].map do |file|
+      [File.basename(file, '.rb').classify.to_sym, file]
+    end.to_h
+    if @autoload_files[name]
+      require @autoload_files[name]
+      Object.const_get(name)
+    else
+      super
+    end
+  end
 end
 
+# App
 run App.new

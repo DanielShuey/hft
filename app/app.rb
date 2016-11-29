@@ -14,15 +14,11 @@ class App < Sinatra::Base
     slim :index, layout: :layout
   end
 
-  def mock_data
-    IO.read(File.join(settings.root, 'assets', 'data', 'mock.json'))
+  get "/simulator" do
+    slim :simulator, layout: :layout
   end
 
-  def get_data2
-    HTTP.get("https://poloniex.com/public?command=returnChartData&currencyPair=BTC_XMR&start=1480032000&end=1480118400&period=300") do |response|
-      if response.ok?
-        response.json
-      end
-    end
+  def historic_data
+    IO.read(File.join(settings.root, 'assets', 'data', 'historic.json'))
   end
 end

@@ -1,31 +1,30 @@
+ruby:
+  sim = Simulator.new filename: 'historic', btc: 0.2
+  sim.apply Dema.new(short: 6, long: 6)
+  sim.perform
+
+script type="text/javascript"
+  == sim.js_dump
+
 .row#header
   table.table
     tr
       td
-        span Total Profit: 123BTC
+        span Total Profit:
+        = sim.profit
       td
-        span 24hr Profit: 123BTC
+        span 24hr Profit:
       td 
-        span BTC: 123
+        span Start: 
+        = sim.btc
       td 
-        span XMR: 123
-
-  table.table
-    tr
+        span End:
+        = sim.currency_btc
       td 
-        span Buy BTC-XMR
-      td 
-        span Rate: 10
-      td 
-        span Amount: 10
+        span Fees:
+        = sim.fees
 
 .row#chart
-
-ruby:
-  dema = Dema.new short: 6, long: 12, ohlc: Simulator.new(filename: 'historic').ohlc
-
-script type="text/javascript"
-  == dema.js_dump
 
 coffee:
   window.onload = ->
@@ -92,6 +91,12 @@ coffee:
           color: '#FAA43A'
           markerType: 'none'
           dataPoints: @dema_data
+        },
+        {
+          name: 'BuySell'
+          type: 'scatter'
+          color: '#FFF'
+          dataPoints: @scatter_data
         }
       ]
     )

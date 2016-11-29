@@ -8,20 +8,9 @@ html
   body
     .overlay
 
-    ul#sidebar.nav.nav-stacked
-      li
-        a href="#"
-          | BTC
-          span.glyphicon.glyphicon-transfer aria-hidden="true"
-          | XMR
-      li
-        a href="#"
-          | BTC
-          span.glyphicon.glyphicon-transfer aria-hidden="true"
-          | ETH
-
     #content
-      == yield
+      .container
+        == yield
 
     script src="js/jquery.min.js" type="text/javascript"
     script src="js/jquery-migrate.min.js" type="text/javascript"
