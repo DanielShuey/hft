@@ -24,11 +24,13 @@ script type="text/javascript"
         span Fees:
         = sim.fees
 
-.row#chart
+.row
+  div id="chart1" style="height: 260px; width: 100%;"
+  div id="chart2" style="height: 260px; width: 100%;"
 
 coffee:
   window.onload = ->
-    chart = new (CanvasJS.Chart)('chart',
+    chart = new (CanvasJS.Chart)('chart1',
       zoomEnabled: false
       exportEnabled: false
       backgroundColor: '#000'
@@ -65,7 +67,7 @@ coffee:
           dataPoints: @ohlc_data
         },        
         {
-          name: 'Weighted'
+          name: 'Price'
           type: 'line'
           color: '#666'
           markerType: 'none'
@@ -101,4 +103,49 @@ coffee:
       ]
     )
     chart.render()
-    return
+
+    chart2 = new (CanvasJS.Chart)('chart2',
+      zoomEnabled: false
+      exportEnabled: false
+      backgroundColor: '#000'
+      axisY:
+        includeZero: false
+        lineThickness: 0
+        gridThickness: 0.5
+        gridDashType: 'dash'
+        labelFontSize: 12
+        labelFontFamily: 'Roboto Mono'
+        labelFontColor: '#fff'
+        margin: 0
+        tickLength: 0
+      axisX:
+        interval: 1
+        intervalType: 'day'
+        valueFormatString: 'DDD hh:mmtt'
+        lineThickness: 0
+        gridThickness: 0.5
+        gridDashType: 'dash'
+        labelFontSize: 12
+        labelFontFamily: 'Roboto Mono'
+        labelFontColor: '#fff'
+        margin: 0
+        tickLength: 0
+      toolTip:
+        shared: true
+      data: [
+        {
+          name: 'Stoch RSI'
+          type: 'spline'
+          color: '#FAA43A'
+          markerType: 'none'
+          dataPoints: @rsi_data
+        },
+        {
+          name: 'BuySell'
+          type: 'scatter'
+          color: '#FFF'
+          dataPoints: @scatter_data
+        }
+      ]
+    )
+    chart2.render()

@@ -2,8 +2,7 @@ class App < Sinatra::Base
   configure do
     register Barista::Integration::Sinatra
     set :public_folder, 'public'
-    set :root, File.expand_path('../../', __FILE__)
-    set :views, File.join(root, '/assets/slim/')
+    set :views, File.join(Config.root, '/assets/slim/')
   end
 
   def include_slim(name, options = {}, &block)

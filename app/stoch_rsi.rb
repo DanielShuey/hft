@@ -1,12 +1,12 @@
 class StochRsi
-  attr_reader :result, :start_date
+  attr_reader :result, :start_date, :current
 
   class DataPoint < Ohlc
-    attributes %i(rsi stoch_rsi average_gain average_loss)
+    attributes *%i(rsi stoch_rsi average_gain average_loss)
   end
 
   def dataset dataset
-    @result = dataset.map { |date, set| [date, DataPoint.new **set.context] }.to_h
+    @result = dataset.map { |set| DataPoint.new(set.context) }
     average_gains
     average_losses
     rsi
@@ -18,12 +18,12 @@ class StochRsi
     @period = 7
   end
 
-  def set_date timestamp
-    @timestamp = timestamp
+  def datapoint timestamp
+    result.find { |x| x.date == timestamp }
   end
 
-  def current
-    result[@timestamp]
+  def set_date timestamp
+    @current = datapoint(timestamp)
   end
 
   def set_balance a, b
@@ -32,67 +32,71 @@ class StochRsi
   end
 
   def buy?
-    if @currency_a >= @currency_b
-      true if current.stoch_rsi > 0.7
+    if current.stoch_rsi
+      if @currency_a >= @currency_b
+        true if current.stoch_rsi > 0.7
+      end
     end
   end
 
   def sell?
-    if @currency_a <= @currency_b
-      true if current.stoch_rsi < 0.3
+    if current.stoch_rsi
+      if @currency_a <= @currency_b
+        true if current.stoch_rsi < 0.3
+      end
     end
   end
 
   def js_dump
     def dump result, method
-      "{ x: new Date(#{result.date * 1000}), y: #{result.send method} }" if chart[method] != nil
+      "{ x: new Date(#{result.date * 1000}), y: #{result.send method} }" if result.send method
     end
 
     [
-      "window.line2_data = [" + result.map { |date, x| (dump x, :stoch_rsi) if date >= start_time }.compact.join(',') + "];"
+      "window.rsi_data = [" + result.map { |x| (dump x, :stoch_rsi) }.compact.join(',') + "];"
     ].join("\n")
   end
 
   private
 
   def find_start_date
-    result.each do |date, x|
-      return date if (DataPoint.attributes.map { |x| result.send x }.compact.length == DataPoint.attributes.length)
+    result.each do |datapoint|
+      return datapoint.date if DataPoint.attributes.map{ |x| datapoint.send x }.compact.length == DataPoint.attributes.length
     end
   end
 
   def average_gains
-    result.each_cons(@period + 1) do |date, points|
-      result[points.last.date].average_gain = points.each_cons(2).map do |x|
-        gain = x[1].weighted_average - x[0].weighted_average
+    result.each_cons(@period).each do |x|
+      datapoint(x.last.date).average_gain = x.each_cons(2).map  do |left, right|
+        gain = right.weighted_average - left.weighted_average
         gain > 0 ? gain.abs : 0
-      end.sum / @period
+      end.sum / (@period - 1)
     end
   end
 
   def average_losses
-    result.each_cons(@period + 1) do |date, points|
-      result[points.last.date].average_loss = points.each_cons(2).map do |x|
-        gain = x[1].weighted_average - x[0].weighted_average
+    result.each_cons(@period).each do |x|
+      datapoint(x.last.date).average_loss = x.each_cons(2).map  do |left, right|
+        gain = right.weighted_average - left.weighted_average
         gain < 0 ? gain.abs : 0
-      end.sum / @period
+      end.sum / (@period - 1)
     end
   end
 
   def stoch_rsi
-    result.each_cons(@period) do |date, x|
+    result.each_cons(@period).each do |x|
       next if !x.first.rsi
       rsi_highest = x.map(&:rsi).max
-      rsi_lowest = x.map(&:rsi).low 
-      result[x.last.date].stoch_rsi = (x.last.rsi - rsi_lowest) / (rsi_highest - rsi_lowest)
+      rsi_lowest = x.map(&:rsi).min
+      datapoint(x.last.date).stoch_rsi = (x.last.rsi - rsi_lowest) / (rsi_highest - rsi_lowest)
     end
   end
 
   def rsi
-    result.each do |date, x|
+    result.each do |x|
       next if !x.average_gain
       rs = x.average_gain / x.average_loss
-      result[date].rsi = 100 - (100 / (1 + rs))
+     datapoint(x.date).rsi = 100 - (100 / (1 + rs))
     end
   end
 end

@@ -1,15 +1,9 @@
-root = File.expand_path('..', __FILE__)
+# Load Path
+$:.unshift File.expand_path('..', __FILE__)
 
-# Gems
-require 'rubygems'
-require 'bundler'
-Bundler.require(:default)
-require 'date'
+# Boot
+require 'config/init.rb'
 
-# App
-Dir[File.join(root, "/app/**/*.rb")].each do |file|
-  require file
-end
 
 task :update_current_data do
   
