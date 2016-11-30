@@ -34,6 +34,7 @@ class Object
     @autoload_files ||= Dir[File.join(File.expand_path('..', __FILE__), "/app/**/*.rb")].map do |file|
       [File.basename(file, '.rb').classify.to_sym, file]
     end.to_h
+
     if @autoload_files[name]
       require @autoload_files[name]
       Object.const_get(name)

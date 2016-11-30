@@ -59,7 +59,7 @@ class Simulator < Struct.new :filename, :btc
   end
 
   def latest_point
-    @latest_point ||= ohlc.length - 1
+    @latest_point ||= strategy.chart.length - 1
   end
 
   def perform

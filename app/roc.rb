@@ -1,9 +1,8 @@
-class Dema
+class Roc
   attr_accessor :ohlc
 
-  def initialize ohlc:
-    @long_duration = 20
-    @short_duration = 5
+  def initialize length:, ohlc: nil
+    @length = length
     @ohlc = ohlc
     @index = @ohlc.length - 1 if ohlc
   end
@@ -17,7 +16,7 @@ class Dema
   end
 
   def earliest_point
-    (@ohlc.length - [long.length, short.length, dema.length].min) + 2
+    (@ohlc.length - [short.length, dema.length].min) + @length + 2
   end
 
   def data_point
@@ -29,10 +28,25 @@ class Dema
     @currency_b = b
   end
 
+  def spline
+    @spline = Spliner::Spliner.new (earliest_point..-1), dema
+  end
+
+  def rate_of_change
+    finish = chart[@index]
+    start = chart[@index-4]
+    
+    finish[:dema] / start[:dema]
+  end
+
+  def threshold
+    0.001
+  end
+
   def buy?
     if @currency_a >= @currency_b
-      diff = data_point[:dema] / data_point[:long]
-      if diff > 1.001
+      if rate_of_change > 1 + threshold
+       puts rate_of_change
         true
       end
     end
@@ -40,23 +54,19 @@ class Dema
 
   def sell?
     if @currency_a <= @currency_b
-      diff = data_point[:dema] / data_point[:long]
-      if diff < 0.999
+      if rate_of_change < 1 - threshold
+        puts rate_of_change
         true
       end
     end
   end
 
-  def long
-    @long ||= averages.each_cons(@long_duration).map(&:ema)
-  end
-
   def dema
-    @dema ||= short.each_cons(@short_duration).map { |x| (2 * x.last) - x.ema }
+    @dema ||= short.each_cons(@length).map { |x| (2 * x.last) - x.ema }
   end
 
   def short
-    @short ||= averages.each_cons(@short_duration).map(&:ema)
+    @short ||= averages.each_cons(@length).map(&:ema)
   end
 
   def chart
@@ -72,8 +82,7 @@ class Dema
         close: x.close,
         average: x.weighted_average,
         volume: x.volume,
-        long: i > @long_duration ? long[i - @long_duration] : nil,
-        short: i > @short_duration ? short[i - @short_duration] : nil,
+        short: i > @length ? short[i - @length] : nil,
         dema: i > dema_duration ? dema[i - dema_duration] : nil
       }
     end
@@ -87,9 +96,8 @@ class Dema
     [
       "window.ohlc_data = [" + chart.map { |x| dump x, :ohlc }.compact.join(',') + "];",
       "window.average_data = [" + chart.map { |x| dump x, :average }.compact.join(',') + "];",
-      "window.long_data = [" + chart.map { |x| dump x, :long }.compact.join(',') + "];",
-      "window.short_data = [" + chart.map { |x| dump x, :short }.compact.join(',') + "];",
       "window.dema_data = [" + chart.map { |x| dump x, :dema }.compact.join(',') + "];",
+      "window.short_data = [" + chart.map { |x| dump x, :short }.compact.join(',') + "];",
       "window.volume = [" + chart.map { |x| dump x, :volume }.compact.join(',') + "];"
     ].join("\n")
   end

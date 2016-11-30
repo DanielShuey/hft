@@ -17,5 +17,5 @@ gem 'bootstrap-sass', '~> 3.3.6'
 gem 'moving_average'
 gem 'httparty'
 gem "activesupport", :require => "active_support/all"
-gem "tux"
 gem "pry"
+gem "spliner"

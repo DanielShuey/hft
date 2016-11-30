@@ -1,6 +1,6 @@
 ruby:
   sim = Simulator.new filename: 'historic', btc: 0.2
-  sim.apply Dema.new(short: 6, long: 6)
+  sim.apply StochRsi.new
   sim.perform
 
 script type="text/javascript"
@@ -43,8 +43,8 @@ coffee:
         margin: 0
         tickLength: 0
       axisX:
-        interval: 4
-        intervalType: 'hour'
+        interval: 1
+        intervalType: 'day'
         valueFormatString: 'DDD hh:mmtt'
         lineThickness: 0
         gridThickness: 0.5
@@ -72,25 +72,25 @@ coffee:
           dataPoints: @average_data
         },
         {
-          name: 'Long'
+          name: 'Line1'
           type: 'spline'
           color: '#2c97de'
           markerType: 'none'
-          dataPoints: @long_data
+          dataPoints: @line1_data
         },
         {
-          name: 'Short'
+          name: 'Line2'
           type: 'spline'
           color: '#60BD68'
           markerType: 'none'
-          dataPoints: @short_data
+          dataPoints: @line2_data
         },
         {
-          name: 'Dema'
+          name: 'Line3'
           type: 'spline'
           color: '#FAA43A'
           markerType: 'none'
-          dataPoints: @dema_data
+          dataPoints: @line3_data
         },
         {
           name: 'BuySell'
