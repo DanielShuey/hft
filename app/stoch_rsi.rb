@@ -1,56 +1,29 @@
 class StochRsi
-  attr_accessor :ohlc
+  attr_reader :result, :start_date
 
-  def initialize period: 7, ohlc: nil
-    @period = period
-    @ohlc = ohlc
-    @index = @ohlc.length - 1 if ohlc
+  class DataPoint < Ohlc
+    attributes %i(rsi stoch_rsi average_gain average_loss)
   end
 
-  def averages
-    @averages ||= @ohlc.map(&:weighted_average)
+  def dataset dataset
+    @result = dataset.map { |date, set| [date, DataPoint.new **set.context] }.to_h
+    average_gains
+    average_losses
+    rsi
+    stoch_rsi
+    @start_date = find_start_date
   end
 
-  def set_point index
-    @index = index
+  def initialize
+    @period = 7
   end
 
-  def earliest_point
-    (@ohlc.length - stoch_rsi.length) + 1
+  def set_date timestamp
+    @timestamp = timestamp
   end
 
-  def average_gains
-    @gains ||= averages.each_cons(@period).map do |x|
-      x.each_cons(2).map do |y|
-        gain = y[1] - y[0]
-        gain > 0 ? gain : 0
-      end.sum / (@period - 1)
-    end
-  end
-
-  def average_losses
-    @losses ||= averages.each_cons(@period).map do |x|
-      x.each_cons(2).map do |y|
-        gain = y[1] - y[0]
-        gain < 0 ? gain.abs : 0
-      end.sum / (@period - 1)
-    end
-  end
-
-  def stoch_rsi
-    @stoch_rsi ||= rsi.each_cons(@period).each_with_index.map do |x, i|
-      (rsi[i] - x.min) / (x.max - x.min)
-    end
-  end
-
-  def rsi
-    @rsi ||= average_gains.zip(average_losses).map { |x| x[0] / x[1] }.map do |rs|
-      100 - (100 / (1 + rs))
-    end
-  end
-
-  def data_point
-    chart[@index]
+  def current
+    result[@timestamp]
   end
 
   def set_balance a, b
@@ -60,42 +33,66 @@ class StochRsi
 
   def buy?
     if @currency_a >= @currency_b
-      true if data_point[:stoch_rsi] > 0.7
+      true if current.stoch_rsi > 0.7
     end
-    rescue
-      binding.pry
   end
 
   def sell?
     if @currency_a <= @currency_b
-      true if data_point[:stoch_rsi] < 0.3
-    end
-  end
-
-  def chart
-    @chart ||= @ohlc[earliest_point..-1].each_with_index.map do |x, i|
-      {
-        date: x.date * 1000,
-        ohlc: %i(open high low close).map(&x.method(:send)),
-        open: x.open,
-        high: x.high,
-        low: x.low,
-        close: x.close,
-        average: x.weighted_average * 1000,
-        volume: x.volume,
-        rsi: rsi[i],
-        stoch_rsi: stoch_rsi[i]
-      }
+      true if current.stoch_rsi < 0.3
     end
   end
 
   def js_dump
-    def dump chart, method
-      "{ x: new Date(#{chart[:date]}), y: #{chart[method]} }" if chart[method] != nil
+    def dump result, method
+      "{ x: new Date(#{result.date * 1000}), y: #{result.send method} }" if chart[method] != nil
     end
 
     [
-      "window.line2_data = [" + chart.map { |x| dump x, :stoch_rsi }.compact.join(',') + "];"
+      "window.line2_data = [" + result.map { |date, x| (dump x, :stoch_rsi) if date >= start_time }.compact.join(',') + "];"
     ].join("\n")
+  end
+
+  private
+
+  def find_start_date
+    result.each do |date, x|
+      return date if (DataPoint.attributes.map { |x| result.send x }.compact.length == DataPoint.attributes.length)
+    end
+  end
+
+  def average_gains
+    result.each_cons(@period + 1) do |date, points|
+      result[points.last.date].average_gain = points.each_cons(2).map do |x|
+        gain = x[1].weighted_average - x[0].weighted_average
+        gain > 0 ? gain.abs : 0
+      end.sum / @period
+    end
+  end
+
+  def average_losses
+    result.each_cons(@period + 1) do |date, points|
+      result[points.last.date].average_loss = points.each_cons(2).map do |x|
+        gain = x[1].weighted_average - x[0].weighted_average
+        gain < 0 ? gain.abs : 0
+      end.sum / @period
+    end
+  end
+
+  def stoch_rsi
+    result.each_cons(@period) do |date, x|
+      next if !x.first.rsi
+      rsi_highest = x.map(&:rsi).max
+      rsi_lowest = x.map(&:rsi).low 
+      result[x.last.date].stoch_rsi = (x.last.rsi - rsi_lowest) / (rsi_highest - rsi_lowest)
+    end
+  end
+
+  def rsi
+    result.each do |date, x|
+      next if !x.average_gain
+      rs = x.average_gain / x.average_loss
+      result[date].rsi = 100 - (100 / (1 + rs))
+    end
   end
 end
