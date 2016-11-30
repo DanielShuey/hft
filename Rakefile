@@ -39,17 +39,17 @@ task :update_current do
   period = get_period '30mins'
 
   HTTParty.get("https://poloniex.com/public?command=returnChartData&currencyPair=#{currency_pair}&start=#{start_time}&end=#{current_timestamp}&period=#{period}").tap do |response|
-    File.open(File.join(root, 'assets', 'data', 'current.json'), 'w') { |f| f.write(response.body) }
+    File.open(File.join(Config.root, 'assets', 'data', 'current.json'), 'w') { |f| f.write(response.body) }
   end
 end
  
 task :update_historic do
   currency_pair = 'BTC_XMR'
   start_time = hours_to_timestamp 168
-  period = get_period '15mins'
+  period = get_period '5mins'
 
   HTTParty.get("https://poloniex.com/public?command=returnChartData&currencyPair=#{currency_pair}&start=#{start_time}&end=#{current_timestamp}&period=#{period}").tap do |response|
-    File.open(File.join(root, 'assets', 'data', 'historic.json'), 'w') { |f| f.write(response.body) }
+    File.open(File.join(Config.root, 'assets', 'data', 'historic.json'), 'w') { |f| f.write(response.body) }
   end
 end
 

@@ -64,8 +64,8 @@ class Simulator
     dataset.each do |x|
       set_date x.date
 
-      buy  if strategy.buy?
-      sell if strategy.sell?
+      buy  if strategy.uptrend?
+      sell if strategy.downtrend?
 
       update_balance
     end

@@ -1,6 +1,6 @@
 ruby:
   sim = Simulator.new filename: 'historic', btc: 0.2
-  sim.apply StochRsi.new
+  sim.apply Strategy.new
   sim.perform
 
 script type="text/javascript"
@@ -23,7 +23,7 @@ script type="text/javascript"
       td 
         span Fees:
         = sim.fees
-
+      
 .row
   div id="chart1" style="height: 260px; width: 100%;"
   div id="chart2" style="height: 260px; width: 100%;"
