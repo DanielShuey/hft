@@ -38,6 +38,7 @@ task :update_current do
   start_time = hours_to_timestamp 168
   period = get_period '30mins'
 
+
   HTTParty.get("https://poloniex.com/public?command=returnChartData&currencyPair=#{currency_pair}&start=#{start_time}&end=#{current_timestamp}&period=#{period}").tap do |response|
     File.open(File.join(Config.root, 'assets', 'data', 'current.json'), 'w') { |f| f.write(response.body) }
   end
@@ -45,10 +46,10 @@ end
  
 task :update_historic do
   currency_pair = 'BTC_XMR'
-  start_time = hours_to_timestamp 48
+  start_time = hours_to_timestamp 16
   period = get_period '5mins'
 
-  HTTParty.get("https://poloniex.com/public?command=returnChartData&currencyPair=#{currency_pair}&start=#{start_time}&end=#{current_timestamp}&period=#{period}").tap do |response|
+  Poloniex.chart_data(currency_pair: currency_pair, start: start_time, finish: current_timestamp, period: period).tap do |response|
     File.open(File.join(Config.root, 'assets', 'data', 'historic.json'), 'w') { |f| f.write(response.body) }
   end
 end
@@ -64,7 +65,7 @@ task :run_simulation do
   puts "Fees: #{sim.fees}"
 end
 
-task :optimize do
+task :update_balance do
   
 end
 

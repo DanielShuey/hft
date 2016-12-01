@@ -1,12 +1,8 @@
-class Scan
-  attr_accessor :indicators, :pressure
-
+class PoloniexSimple
   def initialize
     @indicators = []
-    @ema = Ema.new
     @pressure = Pressure.new
-    @stoch_rsi = StochRsi.new
-    @indicators += [@ema, @pressure, @stoch_rsi]
+    @indicators += [@pressure]
   end
 
   def dataset dataset
