@@ -1,12 +1,11 @@
 class StochRsi
+  include Indicator
+
   attr_reader :result, :start_date, :current
 
-  class DataPoint < Ohlc
-    attributes *%i(rsi stoch_rsi change gain loss average_gain average_loss sma)
-  end
+  attributes *%i(rsi stoch_rsi change gain loss average_gain average_loss sma)
 
-  def dataset dataset
-    @result = dataset.map { |set| DataPoint.new(set.context) }
+  dataset do
     changes
     gains
     losses
@@ -15,40 +14,18 @@ class StochRsi
     rsi
     stoch_rsi
     sma
-    @start_date = find_start_date
   end
 
   def initialize
     @period = 14
   end
 
-  def datapoint timestamp
-    result.find { |x| x.date == timestamp }
+  def overbought?
+    current.stoch_rsi > 80 if current.stoch_rsi
   end
 
-  def set_date timestamp
-    @current = datapoint(timestamp)
-  end
-
-  def set_balance a, b
-    @currency_a = a
-    @currency_b = b
-  end
-
-  def uptrend?
-    if current.sma
-      if @currency_a >= @currency_b
-        true if current.sma > 0.5
-      end
-    end
-  end
-
-  def downtrend?
-    if current.sma
-      if @currency_a <= @currency_b
-        true if current.sma < 0.5
-      end
-    end
+  def oversold?
+    current.stoch_rsi < 20 if current.stoch_rsi
   end
 
   def js_dump
@@ -62,12 +39,6 @@ class StochRsi
   end
 
   private
-
-  def find_start_date
-    result.each do |datapoint|
-      return datapoint.date if DataPoint.attributes.map{ |x| datapoint.send x }.compact.length == DataPoint.attributes.length
-    end
-  end
 
   def changes
     result.each_cons(2) do |left, right|

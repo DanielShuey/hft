@@ -1,5 +1,5 @@
 ruby:
-  sim = Simulator.new filename: '48hr5min', btc: 0.2
+  sim = Simulator.new filename: '1week5min', btc: 0.2
   sim.apply Scan.new
   sim.perform
 
@@ -25,12 +25,14 @@ script type="text/javascript"
         = sim.fees
 
 .row
-  div id="chart1" style="height: 260px; width: 100%;"
-  div id="chart2" style="height: 260px; width: 100%;"
+  div id="moving-average" style="height: 260px; width: 100%;"
+  div id="pressure" style="height: 260px; width: 100%;"
+  div id="stoch-rsi" style="height: 260px; width: 100%;"
+  div id="mfi" style="height: 260px; width: 100%;"
 
 coffee:
-  window.onload = ->
-    chart = new (CanvasJS.Chart)('chart1',
+  create_chart = (name, data) ->
+    new (CanvasJS.Chart)(name,
       zoomEnabled: false
       exportEnabled: false
       backgroundColor: '#000'
@@ -58,7 +60,13 @@ coffee:
         tickLength: 0
       toolTip:
         shared: true
-      data: [{
+      data: data
+    )
+
+  window.onload = ->
+    moving_average = create_chart('moving-average',
+      [
+        {
           name: 'ohlc'
           type: 'candlestick'
           color: '#2c97de'
@@ -102,37 +110,42 @@ coffee:
         }
       ]
     )
-    chart.render()
+    moving_average.render()
 
-    chart2 = new (CanvasJS.Chart)('chart2',
-      zoomEnabled: false
-      exportEnabled: false
-      backgroundColor: '#000'
-      axisY:
-        includeZero: false
-        lineThickness: 0
-        gridThickness: 0.5
-        gridDashType: 'dash'
-        labelFontSize: 12
-        labelFontFamily: 'Roboto Mono'
-        labelFontColor: '#fff'
-        margin: 0
-        tickLength: 0
-      axisX:
-        interval: 1
-        intervalType: 'day'
-        valueFormatString: 'DDD hh:mmtt'
-        lineThickness: 0
-        gridThickness: 0.5
-        gridDashType: 'dash'
-        labelFontSize: 12
-        labelFontFamily: 'Roboto Mono'
-        labelFontColor: '#fff'
-        margin: 0
-        tickLength: 0
-      toolTip:
-        shared: true
-      data: [
+    pressure = create_chart('pressure', 
+      [
+        {
+          name: 'Pressure'
+          type: 'spline'
+          color: '#FAA43A'
+          markerType: 'none'
+          dataPoints: @pressure_data
+        }
+      ]
+    )
+    pressure.render()
+
+    mfi = create_chart('mfi', 
+      [
+        {
+          name: 'MFI'
+          type: 'spline'
+          color: '#FAA43A'
+          markerType: 'none'
+          dataPoints: @mfi_data
+        },
+        {
+          name: 'BuySell'
+          type: 'scatter'
+          color: '#FFF'
+          dataPoints: @scatter_data
+        }
+      ]
+    )
+    mfi.render()
+
+    stoch_rsi = create_chart('stoch-rsi', 
+      [
         {
           name: 'Stoch RSI'
           type: 'spline'
@@ -148,4 +161,4 @@ coffee:
         }
       ]
     )
-    chart2.render()
+    stoch_rsi.render()

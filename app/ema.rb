@@ -1,36 +1,29 @@
-class Dema
+class Ema
   include Indicator
 
   attr_reader :result, :start_date, :current, :long_period, :short_period
 
-  attributes *%i(long short dema)
+  attributes *%i(long short)
 
   dataset do
     long
     short
-    dema
   end
 
   def initialize
-    @short_period = 6
-    @long_period = 18
+    @short_period = 20
+    @long_period = 40
   end
 
   def uptrend?
-    if current.dema && current.long
-      diff = current.dema / current.long
-      if diff > 1.0001
-        true
-      end
+    if current.short && current.long
+      current.short / current.long > 1
     end
   end
 
   def downtrend?
-    if current.dema && current.long
-      diff = current.dema / current.long
-      if diff < 0.9999
-        true
-      end
+    if current.short && current.long
+      current.short / current.long < 1
     end
   end
 
@@ -41,8 +34,7 @@ class Dema
 
     [
       "window.long_data = [" + result.map { |x| dump x, :long }.compact.join(',') + "];",
-      #"window.short_data = [" + result.map { |x| dump x, :short }.compact.join(',') + "];",
-      "window.dema_data = [" + result.map { |x| dump x, :dema }.compact.join(',') + "];"
+      "window.short_data = [" + result.map { |x| dump x, :short }.compact.join(',') + "];",
     ].join("\n")
   end
 
@@ -57,13 +49,6 @@ class Dema
   def short
     result.each_cons(short_period) do |x|
       datapoint(x.last.date).short = x.map(&:weighted_average).ema
-    end
-  end
-
-  def dema
-    result.each_cons(short_period) do |x|
-      next unless x.first.short
-      datapoint(x.last.date).dema = (2 * x.last.short) - x.map(&:short).ema
     end
   end
 end
