@@ -45,7 +45,7 @@ end
  
 task :update_historic do
   currency_pair = 'BTC_XMR'
-  start_time = hours_to_timestamp 168
+  start_time = hours_to_timestamp 48
   period = get_period '5mins'
 
   HTTParty.get("https://poloniex.com/public?command=returnChartData&currencyPair=#{currency_pair}&start=#{start_time}&end=#{current_timestamp}&period=#{period}").tap do |response|

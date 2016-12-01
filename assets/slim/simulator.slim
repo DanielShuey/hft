@@ -1,6 +1,6 @@
 ruby:
-  sim = Simulator.new filename: 'historic', btc: 0.2
-  sim.apply Strategy.new
+  sim = Simulator.new filename: '48hr5min', btc: 0.2
+  sim.apply Scan.new
   sim.perform
 
 script type="text/javascript"
@@ -23,7 +23,7 @@ script type="text/javascript"
       td 
         span Fees:
         = sim.fees
-      
+
 .row
   div id="chart1" style="height: 260px; width: 100%;"
   div id="chart2" style="height: 260px; width: 100%;"
@@ -74,25 +74,25 @@ coffee:
           dataPoints: @average_data
         },
         {
-          name: 'Line1'
+          name: 'Long'
           type: 'spline'
           color: '#2c97de'
           markerType: 'none'
-          dataPoints: @line1_data
+          dataPoints: @long_data
         },
         {
-          name: 'Line2'
+          name: 'Short'
           type: 'spline'
           color: '#60BD68'
           markerType: 'none'
-          dataPoints: @line2_data
+          dataPoints: @short_data
         },
         {
-          name: 'Line3'
+          name: 'Dema'
           type: 'spline'
           color: '#FAA43A'
           markerType: 'none'
-          dataPoints: @line3_data
+          dataPoints: @dema_data
         },
         {
           name: 'BuySell'

@@ -1,27 +1,29 @@
 class Dema
-  attr_accessor :ohlc
+  attr_reader :result, :start_date, :current, :long_period, :short_period
 
-  def initialize ohlc:
-    @long_duration = 20
-    @short_duration = 5
-    @ohlc = ohlc
-    @index = @ohlc.length - 1 if ohlc
+  class DataPoint < Ohlc
+    attributes *%i(long short dema)
   end
 
-  def averages
-    @averages ||= @ohlc.map(&:weighted_average)
+  def dataset dataset
+    @result = dataset.map { |set| DataPoint.new(set.context) }
+    long
+    short
+    dema
+    @start_date = find_start_date
   end
 
-  def set_point index
-    @index = index
+  def initialize
+    @short_period = 5
+    @long_period = 20
   end
 
-  def earliest_point
-    (@ohlc.length - [long.length, short.length, dema.length].min) + 2
+  def datapoint timestamp
+    result.find { |x| x.date == timestamp }
   end
 
-  def data_point
-    chart[@index]
+  def set_date timestamp
+    @current = datapoint(timestamp)
   end
 
   def set_balance a, b
@@ -29,68 +31,60 @@ class Dema
     @currency_b = b
   end
 
-  def buy?
+  def uptrend?
     if @currency_a >= @currency_b
-      diff = data_point[:dema] / data_point[:long]
+      diff = current.dema / current.long
       if diff > 1.001
         true
       end
     end
   end
 
-  def sell?
+  def downtrend?
     if @currency_a <= @currency_b
-      diff = data_point[:dema] / data_point[:long]
+      diff = current.dema / current.long
       if diff < 0.999
         true
       end
     end
   end
 
-  def long
-    @long ||= averages.each_cons(@long_duration).map(&:ema)
-  end
-
-  def dema
-    @dema ||= short.each_cons(@short_duration).map { |x| (2 * x.last) - x.ema }
-  end
-
-  def short
-    @short ||= averages.each_cons(@short_duration).map(&:ema)
-  end
-
-  def chart
-    dema_duration = @ohlc.length - dema.length
-
-    @chart ||= @ohlc.each_with_index.map do |x, i|
-      {
-        date: x.date * 1000,
-        ohlc: %i(open high low close).map(&x.method(:send)),
-        open: x.open,
-        high: x.high,
-        low: x.low,
-        close: x.close,
-        average: x.weighted_average,
-        volume: x.volume,
-        long: i > @long_duration ? long[i - @long_duration] : nil,
-        short: i > @short_duration ? short[i - @short_duration] : nil,
-        dema: i > dema_duration ? dema[i - dema_duration] : nil
-      }
-    end
-  end
-
   def js_dump
-    def dump chart, method
-      "{ x: new Date(#{chart[:date]}), y: #{chart[method]} }" if chart[method] != nil
+    def dump result, method
+      "{ x: new Date(#{result.date * 1000}), y: #{result.send method} }" if result.send method
     end
 
     [
-      "window.ohlc_data = [" + chart.map { |x| dump x, :ohlc }.compact.join(',') + "];",
-      "window.average_data = [" + chart.map { |x| dump x, :average }.compact.join(',') + "];",
-      "window.long_data = [" + chart.map { |x| dump x, :long }.compact.join(',') + "];",
-      "window.short_data = [" + chart.map { |x| dump x, :short }.compact.join(',') + "];",
-      "window.dema_data = [" + chart.map { |x| dump x, :dema }.compact.join(',') + "];",
-      "window.volume = [" + chart.map { |x| dump x, :volume }.compact.join(',') + "];"
+      "window.long_data = [" + result.map { |x| dump x, :long }.compact.join(',') + "];",
+      "window.short_data = [" + result.map { |x| dump x, :short }.compact.join(',') + "];",
+      "window.dema_data = [" + result.map { |x| dump x, :dema }.compact.join(',') + "];"
     ].join("\n")
+  end
+
+  private
+
+  def find_start_date
+    result.each do |datapoint|
+      return datapoint.date if DataPoint.attributes.map{ |x| datapoint.send x }.compact.length == DataPoint.attributes.length
+    end
+  end
+
+  def long
+    result.each_cons(long_period) do |x|
+      datapoint(x.last.date).long = x.map(&:weighted_average).sma
+    end
+  end
+
+  def short
+    result.each_cons(short_period) do |x|
+      datapoint(x.last.date).short = x.map(&:weighted_average).ema
+    end
+  end
+
+  def dema
+    result.each_cons(short_period) do |x|
+      next unless x.first.short
+      datapoint(x.last.date).dema = (2 * x.last.short) - x.map(&:short).ema
+    end
   end
 end
