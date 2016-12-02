@@ -1,6 +1,6 @@
 ruby:
   sim = Simulator.new filename: '2week5min', btc: 0.2
-  sim.apply Scan.new
+  sim.apply DemoScan.new
   sim.perform
 
 script type="text/javascript"
@@ -13,7 +13,8 @@ script type="text/javascript"
         span Total Profit:
         = sim.profit
       td
-        span 24hr Profit:
+        span Lazy Profit:
+        = sim.lazy_profit
       td 
         span Start: 
         = sim.btc
@@ -103,10 +104,16 @@ coffee:
           dataPoints: @dema_data
         },
         {
-          name: 'BuySell'
+          name: 'Buy'
           type: 'scatter'
-          color: '#FFF'
-          dataPoints: @scatter_data
+          markerColor: 'green'
+          dataPoints: @buy_data
+        },
+        {
+          name: 'Sell'
+          type: 'scatter'
+          markerColor: 'red'
+          dataPoints: @sell_data
         }
       ]
     )
@@ -120,6 +127,18 @@ coffee:
           color: '#FAA43A'
           markerType: 'none'
           dataPoints: @pressure_data
+        },
+        {
+          name: 'Buy'
+          type: 'scatter'
+          markerColor: 'green'
+          dataPoints: @buy_data
+        },
+        {
+          name: 'Sell'
+          type: 'scatter'
+          markerColor: 'red'
+          dataPoints: @sell_data
         }
       ]
     )
@@ -135,10 +154,16 @@ coffee:
           dataPoints: @mfi_data
         },
         {
-          name: 'BuySell'
+          name: 'Buy'
           type: 'scatter'
-          color: '#FFF'
-          dataPoints: @scatter_data
+          markerColor: 'green'
+          dataPoints: @buy_data
+        },
+        {
+          name: 'Sell'
+          type: 'scatter'
+          markerColor: 'red'
+          dataPoints: @sell_data
         }
       ]
     )
@@ -154,10 +179,16 @@ coffee:
           dataPoints: @rsi_data
         },
         {
-          name: 'BuySell'
+          name: 'Buy'
           type: 'scatter'
-          color: '#FFF'
-          dataPoints: @scatter_data
+          markerColor: 'green'
+          dataPoints: @buy_data
+        },
+        {
+          name: 'Sell'
+          type: 'scatter'
+          markerColor: 'red'
+          dataPoints: @sell_data
         }
       ]
     )

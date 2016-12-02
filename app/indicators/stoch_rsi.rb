@@ -21,11 +21,11 @@ class StochRsi
   end
 
   def overbought?
-    current.stoch_rsi > 80 if current.stoch_rsi
+    current.stoch_rsi > 70 if current.stoch_rsi
   end
 
   def oversold?
-    current.stoch_rsi < 20 if current.stoch_rsi
+    current.stoch_rsi < 30 if current.stoch_rsi
   end
 
   def js_dump

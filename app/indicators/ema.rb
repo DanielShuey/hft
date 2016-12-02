@@ -9,10 +9,10 @@ class Ema
     long
     short
   end
-
+ 
   def initialize
-    @short_period = 20
-    @long_period = 40
+    @short_period = 5
+    @long_period = 20
   end
 
   def uptrend?

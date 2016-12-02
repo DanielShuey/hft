@@ -13,13 +13,13 @@ class DemoScan
 
   def buy?
     if buying?
-      @pressure.uptrend?
+      @pressure.uptrend? && !@stoch_rsi.overbought? && !@ema.downtrend?
     end
   end
 
   def sell?
     if selling?
-      @pressure.downtrend?
+      @pressure.downtrend? 
     end
   end
 

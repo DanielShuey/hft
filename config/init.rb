@@ -12,6 +12,8 @@ require 'bundler'
 Bundler.require(:default)
 require 'sinatra/base'
 require 'sass/plugin/rack'
+require 'openssl'
+require "addressable/uri"
 
 # Sass
 use Sass::Plugin::Rack

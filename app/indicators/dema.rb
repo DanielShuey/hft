@@ -12,14 +12,14 @@ class Dema
   end
 
   def initialize
-    @short_period = 6
-    @long_period = 18
+    @short_period = 5
+    @long_period = 10
   end
 
   def uptrend?
     if current.dema && current.long
       diff = current.dema / current.long
-      if diff > 1.0001
+      if diff > 1
         true
       end
     end
@@ -28,7 +28,7 @@ class Dema
   def downtrend?
     if current.dema && current.long
       diff = current.dema / current.long
-      if diff < 0.9999
+      if diff < 1
         true
       end
     end
@@ -41,8 +41,7 @@ class Dema
 
     [
       "window.long_data = [" + result.map { |x| dump x, :long }.compact.join(',') + "];",
-      #"window.short_data = [" + result.map { |x| dump x, :short }.compact.join(',') + "];",
-      "window.dema_data = [" + result.map { |x| dump x, :dema }.compact.join(',') + "];"
+      "window.short_data = [" + result.map { |x| dump x, :dema }.compact.join(',') + "];",
     ].join("\n")
   end
 
