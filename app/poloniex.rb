@@ -38,13 +38,10 @@ class Poloniex
       get 'returnChartData', { currencyPair: currency_pair, start: start, end: finish, period: get_period(period) }
     end
 
-    def available_balance
-      post 'returnBalances'
-    end
-
-    def complete_balance
+    def balance
       post 'returnCompleteBalances'
     end
+
 # "currencyPair", "rate", and "amount"
     def buy
 

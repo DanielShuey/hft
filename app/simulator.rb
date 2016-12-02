@@ -7,7 +7,7 @@ class Simulator
   end
 
   def dataset
-    @dataset ||= Ohlc.from_json(IO.read(File.join(Config.root, 'assets', 'data', "#{filename}.json")))
+    @dataset ||= Ohlc.from_json(IO.read(File.join(Config.root, 'assets', 'history', "#{filename}.json")))
   end
 
   def apply scan
@@ -22,7 +22,7 @@ class Simulator
 
   def buy
     @last_btc = currency_btc
-    amount = currency_btc * (1.to_f / current.weighted_average)
+    amount = currency_btc * (1.to_d / current.weighted_average)
     @currency_other = amount - fee(amount)
     @currency_btc = 0
     @transactions << { date: current.date, type: :buy, price: current.weighted_average, amount: @currency_other }
@@ -46,7 +46,7 @@ class Simulator
   end
 
   def gain
-    (1-(btc/currency_btc))*100
+    ((currency_btc - btc) / btc) * 100
   end
 
   def update_balance

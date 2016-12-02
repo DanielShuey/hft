@@ -10,7 +10,11 @@ class App < Sinatra::Base
   end
 
   get "/" do
-    slim :index, layout: :layout
+    redirect to('/robot')
+  end
+
+  get "/robot" do
+    slim :robot, layout: :layout
   end
 
   get "/simulator" do

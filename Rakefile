@@ -12,15 +12,13 @@ task :run_robot do
 
 end
 
-task :update_balance do
-  Poloniex.available_balance.tap do |response|
-    File.open(File.join(Config.root, 'assets', 'response_cache', 'available_balance.json'), 'w') { |f| f.write(response.body) } if response.ok?
-  end
+task :update_trade_history do
+  
 end
 
-task :update_complete_balance do
-  Poloniex.available_balance.tap do |response|
-    File.open(File.join(Config.root, 'assets', 'response_cache', 'available_balance.json'), 'w') { |f| f.write(response.body) } if response.ok?
+task :update_balance do
+  Poloniex.balance.tap do |response|
+    File.open(File.join(Config.root, 'assets', 'response_cache', 'balance.json'), 'w') { |f| f.write(response.body) } if response.ok?
   end
 end
 
