@@ -9,23 +9,6 @@ class Poloniex
       base_uri 'https://poloniex.com/'
     end
 
-    def nonce
-      (Time.now.to_f * 1000000).to_i
-    end
-
-    def sign data
-      OpenSSL::HMAC.hexdigest 'sha512', @secret, Addressable::URI.form_encode(data)
-    end
-
-    def post command, **params
-      query = { command: command, nonce: nonce }.merge(params)
-      API.post "/tradingApi", { body: Addressable::URI.form_encode(query), headers: { 'Key' => @api_key, 'Sign' => sign(query) } }
-    end
-
-    def get command, **params
-      API.get "/public", { query: { command: command }.merge(params) }
-    end
-
     def production_mode toggle
       if toggle
       else
@@ -37,21 +20,41 @@ class Poloniex
     def chart_data currency_pair:, start:, period:, finish: current_time
       get 'returnChartData', { currencyPair: currency_pair, start: start, end: finish, period: get_period(period) }
     end
+  
+    def ticker
+      get 'returnTicker'
+    end
 
     def balance
       post 'returnCompleteBalances'
     end
 
-# "currencyPair", "rate", and "amount"
-    def buy
-
+    def buy currency_pair:, rate:, amount:
+      post 'buy', currencyPair: currency_pair, rate: rate, amount: amount, immediateOrCancel: 1
     end
 
-    def sell
-
+    def sell currency_pair:, rate:, amount:
+      post 'sell', currencyPair: currency_pair, rate: rate, amount: amount, immediateOrCancel: 1
     end
 
     private
+
+    def post command, **params
+      query = { command: command, nonce: nonce }.merge(params)
+      API.post "/tradingApi", { body: Addressable::URI.form_encode(query), headers: { 'Key' => @api_key, 'Sign' => sign(query) } }
+    end
+
+    def get command, **params
+      API.get "/public", { query: { command: command }.merge(params) }
+    end
+
+    def nonce
+      (Time.now.to_f * 1000000).to_i
+    end
+
+    def sign data
+      OpenSSL::HMAC.hexdigest 'sha512', @secret, Addressable::URI.form_encode(data)
+    end
 
     def current_time
       Time.now.getutc.to_i

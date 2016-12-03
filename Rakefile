@@ -4,12 +4,22 @@ $:.unshift File.expand_path('..', __FILE__)
 # Boot
 require 'config/init.rb'
 
-def backtrack hours
-  (DateTime.now - (hours.to_f/24.to_f)).to_time.to_i
+task :run_robot do
+  Robot.run :xmr
 end
 
-task :run_robot do
+task :buy do
+  ChartData.update
+  Balance.update
+  Ticker.update
+  puts Poloniex.buy currency_pair: 'BTC_XMR', rate: Ticker.lowest_ask, amount: Balance.available_btc * (1/Ticker.lowest_ask)
+end
 
+task :sell do
+  ChartData.update
+  Balance.update
+  Ticker.update
+  puts Poloniex.sell currency_pair: 'BTC_XMR', rate: Ticker.highest_bid, amount: Balance.available_xmr
 end
 
 task :update_trade_history do
@@ -17,21 +27,15 @@ task :update_trade_history do
 end
 
 task :update_balance do
-  Poloniex.balance.tap do |response|
-    File.open(File.join(Config.root, 'assets', 'response_cache', 'balance.json'), 'w') { |f| f.write(response.body) } if response.ok?
-  end
+  Balance.new.update
 end
 
 task :update_current do
- Poloniex.chart_data(currency_pair: 'BTC_XMR', start: backtrack(36), period: '5mins').tap do |response|
-    File.open(File.join(Config.root, 'assets', 'response_cache', 'chart.json'), 'w') { |f| f.write(response.body) }
-  end
+  ChartData.update
 end
  
 task :update_historic do
- Poloniex.chart_data(currency_pair: 'BTC_XMR', start: backtrack(36), period: '5mins').tap do |response|
-    File.open(File.join(Config.root, 'assets', 'response_cache', 'chart.json'), 'w') { |f| f.write(response.body) }
-  end
+  ChartData.update_historic rewind: 48
 end
 
 task :run_simulation do

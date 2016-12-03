@@ -39,7 +39,7 @@ Slim::Engine.set_options pretty: true, sort_attrs: false
 class Object
   def self.const_missing name
     @autoload_files ||= Dir[File.join(Config.root, "/app/**/*.rb")].map do |file|
-      [File.basename(file, '.rb').classify.to_sym, file]
+      [File.basename(file, '.rb').camelize.to_sym, file]
     end.to_h
 
     if @autoload_files[name]

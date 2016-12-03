@@ -40,19 +40,6 @@ module Indicator
     @current = datapoint(timestamp)
   end
 
-  def set_balance a, b
-    @currency_a = a
-    @currency_b = b
-  end
-
-  def buying?
-    @currency_a >= @currency_b
-  end
-
-  def selling?
-    @currency_a <= @currency_b
-  end
-
   private
 
   def find_start_date

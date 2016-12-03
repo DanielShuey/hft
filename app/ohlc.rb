@@ -9,10 +9,6 @@ class Ohlc
     @attributes += attributes
   end
 
-  def self.from_json json
-    JSON.parse(json).map { |x| Ohlc.new(**x.map { |k, v| [k.underscore.to_sym, v] }.to_h) }
-  end
-
   def context
     self.class.attributes.map do |attribute|
       [ attribute, instance_variable_get("@#{attribute}") ]

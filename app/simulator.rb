@@ -7,7 +7,7 @@ class Simulator
   end
 
   def dataset
-    @dataset ||= Ohlc.from_json(IO.read(File.join(Config.root, 'assets', 'history', "#{filename}.json")))
+    @dataset ||= ChartData.historic filename
   end
 
   def apply scan
@@ -17,7 +17,6 @@ class Simulator
     @last_btc = btc
     @currency_other = 0
     @fees = 0
-    update_balance
   end
 
   def buy
@@ -49,10 +48,6 @@ class Simulator
     ((currency_btc - btc) / btc) * 100
   end
 
-  def update_balance
-    scan.set_balance currency_btc, currency_other
-  end
-
   def fee amount
     amount * 0.0025
   end
@@ -62,16 +57,20 @@ class Simulator
     scan.set_date timestamp
   end
 
-  def perform
-    update_balance
+  def buying?
+    currency_btc > 0
+  end
 
+  def selling?
+    currency_other > 0
+  end
+
+  def perform
     dataset.each do |x|
       set_date x.date
 
-      buy  if scan.buy?
-      sell if scan.sell?
-
-      update_balance
+      buy  if buying?  && scan.buy?
+      sell if selling? && scan.sell?
     end
 
     sell if currency_other > 0

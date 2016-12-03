@@ -11,22 +11,22 @@ script type="text/javascript"
     tr
       td
         span Total Profit:
-        = sim.profit
+        = sim.profit.round(5)
       td
         span Lazy Profit:
-        = sim.lazy_profit
+        = sim.lazy_profit.round(5)
       td 
         span Start: 
-        = sim.btc
+        = sim.btc.round(5)
       td 
         span End:
-        = sim.currency_btc
+        = sim.currency_btc.round(5)
       td 
         span Fees:
-        = sim.fees
+        = sim.fees.round(5)
       td 
         span Gain:
-        = sim.gain
+        = sim.gain.round(5)
 
 .row
   div id="moving-average" style="height: 260px; width: 100%;"

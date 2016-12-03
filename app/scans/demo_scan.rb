@@ -12,29 +12,11 @@ class DemoScan
   end
 
   def buy?
-    if buying?
-      @pressure.uptrend? && !@stoch_rsi.overbought? && !@ema.downtrend?
-    end
+    @pressure.uptrend? && !@stoch_rsi.overbought? && !@ema.downtrend?
   end
 
   def sell?
-    if selling?
-      @pressure.downtrend? 
-    end
-  end
-
-  def buying?
-    @currency_a >= @currency_b
-  end
-
-  def selling?
-    @currency_a <= @currency_b
-  end
-
-  def set_balance currency_a, currency_b
-    @currency_a = currency_a
-    @currency_b = currency_b
-    @indicators.each { |x| x.set_balance currency_a, currency_b }
+    @pressure.downtrend? 
   end
 
   def set_date timestamp
