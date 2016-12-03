@@ -17,20 +17,6 @@ task :run_robot_once do
   Robot.perform :xmr
 end
 
-task :buy do
-  ChartData.update
-  Balance.update
-  Ticker.update
-  puts Poloniex.buy currency_pair: 'BTC_XMR', rate: Ticker.lowest_ask, amount: Balance.available_btc * (1/Ticker.lowest_ask)
-end
-
-task :sell do
-  ChartData.update
-  Balance.update
-  Ticker.update
-  puts Poloniex.sell currency_pair: 'BTC_XMR', rate: Ticker.highest_bid, amount: Balance.available_xmr
-end
-
 task :update_trade_history do
   
 end

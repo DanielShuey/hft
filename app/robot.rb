@@ -35,13 +35,13 @@ class Robot
     def buy
       Ticker.update
       puts "Robot Buy"
-      puts Poloniex.buy currency_pair: 'BTC_XMR', rate: Ticker.lowest_ask, amount: Balance.available_btc * (1/Ticker.lowest_ask)
+      puts Poloniex.buy currency_pair: currency_pair, rate: Ticker.lowest_ask(currency_pair), amount: Balance.available(:btc) * (1/Ticker.lowest_ask(currency_pair))
     end
 
     def sell
       Ticker.update
       puts "Robot Sell"
-      puts Poloniex.sell currency_pair: 'BTC_XMR', rate: Ticker.highest_bid, amount: Balance.available_xmr
+      puts Poloniex.sell currency_pair: currency_pair, rate: Ticker.highest_bid(currency_pair), amount: Balance.available(@currency)
     end
 
     def currency_pair
