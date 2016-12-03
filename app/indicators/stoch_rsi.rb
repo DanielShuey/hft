@@ -21,11 +21,11 @@ class StochRsi
   end
 
   def overbought?
-    current.stoch_rsi > 70 if current.stoch_rsi
+    current.stoch_rsi > 0.8 if current.stoch_rsi
   end
 
   def oversold?
-    current.stoch_rsi < 30 if current.stoch_rsi
+    current.stoch_rsi < 0.2 if current.stoch_rsi
   end
 
   def js_dump
@@ -34,7 +34,7 @@ class StochRsi
     end
 
     [
-      "window.rsi_data = [" + result.map { |x| (dump x, :sma) }.compact.join(',') + "];"
+      "window.rsi_data = [" + result.map { |x| (dump x, :stoch_rsi) }.compact.join(',') + "];"
     ].join("\n")
   end
 

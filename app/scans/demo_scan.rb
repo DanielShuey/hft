@@ -4,7 +4,8 @@ class DemoScan
     @ema = Ema.new
     @pressure = Pressure.new
     @stoch_rsi = StochRsi.new
-    @indicators += [@ema, @pressure, @stoch_rsi]
+    @cmf = ChaikinMoneyFlow.new
+    @indicators += [@ema, @pressure, @stoch_rsi, @cmf]
   end
 
   def dataset dataset
@@ -12,7 +13,7 @@ class DemoScan
   end
 
   def buy?
-    @pressure.uptrend? && !@stoch_rsi.overbought? && !@ema.downtrend?
+    @pressure.uptrend? && !@ema.downtrend?
   end
 
   def sell?

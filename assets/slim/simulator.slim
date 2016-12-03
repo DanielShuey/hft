@@ -31,8 +31,8 @@ script type="text/javascript"
 .row
   div id="moving-average" style="height: 260px; width: 100%;"
   div id="pressure" style="height: 260px; width: 100%;"
+  div id="cmf" style="height: 260px; width: 100%;"
   div id="stoch-rsi" style="height: 260px; width: 100%;"
-  div id="mfi" style="height: 260px; width: 100%;"
 
 coffee:
   create_chart = (name, data) ->
@@ -147,14 +147,14 @@ coffee:
     )
     pressure.render()
 
-    mfi = create_chart('mfi', 
+    cmf = create_chart('cmf', 
       [
         {
-          name: 'MFI'
+          name: 'CMF'
           type: 'spline'
           color: '#FAA43A'
           markerType: 'none'
-          dataPoints: @mfi_data
+          dataPoints: @cmf_data
         },
         {
           name: 'Buy'
@@ -170,7 +170,7 @@ coffee:
         }
       ]
     )
-    mfi.render()
+    cmf.render()
 
     stoch_rsi = create_chart('stoch-rsi', 
       [

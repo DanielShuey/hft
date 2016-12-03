@@ -1,3 +1,5 @@
+# Money Flow
+
 class Mfi
   include Indicator
 

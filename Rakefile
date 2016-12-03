@@ -30,7 +30,7 @@ task :update_current do
 end
  
 task :update_historic do
-  ChartData.update_historic rewind: 48
+  ChartData.update_historic currency_pair: 'BTC_XMR', rewind: 16
 end
 
 task :run_simulation do

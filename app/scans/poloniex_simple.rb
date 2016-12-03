@@ -2,9 +2,8 @@ class PoloniexSimple
   def initialize
     @indicators = []
     @ema = Ema.new
-    @pressure = Pressure.new
     @stoch_rsi = StochRsi.new
-    @indicators += [@ema, @pressure, @stoch_rsi]
+    @indicators += [@ema, @pressure]
   end
 
   def dataset dataset
@@ -12,7 +11,7 @@ class PoloniexSimple
   end
 
   def buy?
-    @pressure.uptrend? && !@stoch_rsi.overbought? && !@ema.downtrend?
+    @pressure.uptrend? && !@ema.downtrend?
   end
 
   def sell?
