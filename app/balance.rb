@@ -36,7 +36,7 @@ class Balance
     end
 
     def starting_file
-      IO.read(File.join(Config.root, 'temp', 'responses', 'starting_balance.json'))
+      IO.read(File.join(Config.root, 'assets', 'data', 'starting_balance.json'))
     end
 
     def balance
