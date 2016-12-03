@@ -8,6 +8,10 @@ task :run_robot do
   Robot.run :xmr
 end
 
+task :run_robot_once do
+  Robot.perform :xmr
+end
+
 task :buy do
   ChartData.update
   Balance.update

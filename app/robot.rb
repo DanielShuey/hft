@@ -4,14 +4,14 @@ class Robot
       Rufus::Scheduler.new.tap { |s| s.every('3m') { perform currency } }.join
     end
 
-    private
-
     def perform currency
       puts "Robot Scan : #{Time.now}"
       @currency = currency
       update
       scan
     end
+
+    private
 
     def dataset
       @dataset ||= ChartData.read currency_pair
