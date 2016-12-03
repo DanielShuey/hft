@@ -20,7 +20,7 @@ class Ticker
     end
 
     def filepath
-      File.join(Config.root, 'assets', 'response_cache', "ticker.json")
+      File.join(Config.root, 'temp', 'responses', "ticker.json")
     end
 
     def read

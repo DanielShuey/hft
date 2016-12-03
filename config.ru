@@ -8,6 +8,9 @@ Bundler.require(:default, :webserver)
 require 'sinatra/base'
 require 'sass/plugin/rack'
 
+# Boot
+require 'config/boot.rb'
+
 # Sass
 use Sass::Plugin::Rack
 Sass::Plugin.options[:template_location] = "assets/sass"
@@ -25,9 +28,6 @@ Tilt::CoffeeScriptTemplate.default_bare = true
 
 # Slim
 Slim::Engine.set_options pretty: true, sort_attrs: false
-
-# Boot
-require 'config/boot.rb'
 
 # App
 run App.new

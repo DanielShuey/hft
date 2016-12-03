@@ -26,3 +26,8 @@ class Object
     end
   end
 end
+
+# Make Temp Directories
+
+require 'fileutils'
+FileUtils::mkdir_p File.join(Config.root, 'temp', 'responses')
