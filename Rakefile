@@ -1,8 +1,13 @@
 # Load Path
 $:.unshift File.expand_path('..', __FILE__)
 
+# Gems
+require 'rubygems'
+require 'bundler'
+Bundler.require(:default)
+
 # Boot
-require 'config/init.rb'
+require 'config/boot.rb'
 
 task :run_robot do
   Robot.run :xmr
