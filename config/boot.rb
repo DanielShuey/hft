@@ -15,7 +15,7 @@ class Config
     end
 
     def currency_pair
-      "BTC_#{currency.to_s.upcase}"
+      "BTC_#{Config.currency.upcase}"
     end
   end
 end
