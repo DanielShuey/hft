@@ -1,9 +1,9 @@
 class Robot
   class << self
-    attr_accessor :dataset, :currency
+    attr_accessor :dataset
 
     def run
-      Rufus::Scheduler.new.tap { |s| s.every('3m') { perform currency } }.join
+      Rufus::Scheduler.new.tap { |s| s.every('3m') { perform } }.join
     end
 
     def perform
@@ -29,12 +29,12 @@ class Robot
 
         history(
           x.log.merge({ 
-            :btc         => Balance.available(:btc), 
-            currency     => Balance.available(Config.currency),
-            :highest_bid => Ticker.highest_bid,
-            :lowest_ask  => Ticker.lowest_ask,
-            :buy         => buying?  && x.buy?,
-            :sell        => selling? && x.sell?
+            :btc            => Balance.available(:btc), 
+            Config.currency => Balance.available(Config.currency),
+            :highest_bid    => Ticker.highest_bid,
+            :lowest_ask     => Ticker.lowest_ask,
+            :buy            => buying?  && x.buy?,
+            :sell           => selling? && x.sell?
           }).to_json
         )
       end
