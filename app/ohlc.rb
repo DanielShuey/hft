@@ -10,7 +10,7 @@ class Ohlc
   end
 
   def context
-    self.class.attributes.map do |attribute|
+    (self.class.attributes | Ohlc.attributes).map do |attribute|
       [ attribute, instance_variable_get("@#{attribute}") ]
     end.to_h
   end
