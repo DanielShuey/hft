@@ -1,7 +1,7 @@
 class Dema
   include Indicator
 
-  attr_reader :result, :start_date, :current, :long_period, :short_period
+  attr_reader :long_period, :short_period
 
   attributes *%i(long short dema)
 

@@ -3,8 +3,6 @@
 class Mfi
   include Indicator
 
-  attr_reader :result, :start_date, :current
-
   attributes *%i(typical_price direction raw_money_flow positive_flow negative_flow money_flow_ratio mfi)
 
   dataset do

@@ -1,8 +1,6 @@
 class ChaikinMoneyFlow
   include Indicator
 
-  attr_reader :result, :start_date, :current
-
   attributes *%i(money_flow_multiplier volume_for_period money_flow_volume cmf)
 
   dataset do

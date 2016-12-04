@@ -1,5 +1,7 @@
 class Robot
   class << self
+    attr_accessor :dataset, :currency
+
     def run currency
       Rufus::Scheduler.new.tap { |s| s.every('3m') { perform currency } }.join
     end
@@ -13,41 +15,42 @@ class Robot
 
     private
 
-    def dataset
-      @dataset ||= ChartData.read currency_pair
-    end
-
     def update
       ChartData.update currency_pair
       Balance.update
+      Ticker.update
     end
 
     def scan
       PoloniexSimple.new.tap do |x|
-        x.dataset ChartData.read currency_pair
-        x.set_date dataset.last.date
+        x.dataset ChartData.read(currency_pair)
 
         buy  if buying?  && x.buy?
         sell if selling? && x.sell?
 
-        history x.log.to_json
+        history(
+          x.log.merge({ 
+            :btc         => Balance.available(:btc), 
+            currency     => Balance.available(currency),
+            :highest_bid => Ticker.highest_bid(currency_pair),
+            :lowest_ask  => Ticker.lowest_ask(currency_pair)
+          }).to_json
+        )
       end
     end
 
     def buy
-      Ticker.update
       puts "Robot Buy"
       puts Poloniex.buy currency_pair: currency_pair, rate: Ticker.lowest_ask(currency_pair), amount: Balance.available(:btc) * (1/Ticker.lowest_ask(currency_pair))
     end
 
     def sell
-      Ticker.update
       puts "Robot Sell"
       puts Poloniex.sell currency_pair: currency_pair, rate: Ticker.highest_bid(currency_pair), amount: Balance.available(@currency)
     end
 
     def currency_pair
-      "BTC_#{@currency.to_s.upcase}"
+      "BTC_#{currency.to_s.upcase}"
     end
 
     def buying?
@@ -55,7 +58,7 @@ class Robot
     end
 
     def selling?
-      Balance.available(@currency) > 0
+      Balance.available(currency) > 0
     end
   end
 end

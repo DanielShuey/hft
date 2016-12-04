@@ -1,8 +1,6 @@
 class Pressure
   include Indicator
 
-  attr_reader :result, :start_date, :current
-
   attributes *%i(pressure direction normalized_pressure)
 
   dataset do

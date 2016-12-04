@@ -1,5 +1,5 @@
 module Indicator
-  attr_reader :result, :start_date, :current, :currency_a, :currency_b
+  attr_reader :result, :current, :currency_a, :currency_b
 
   def self.included(base)
     base.extend(ClassMethods)
@@ -29,7 +29,7 @@ module Indicator
   def dataset dataset
     @result = dataset.map { |set| self.class.datapoint_class.new(set.context) }
     instance_eval(&self.class.dataset_block)
-    @start_date = find_start_date
+    set_date dataset.last.date
   end
 
   def datapoint timestamp
@@ -38,13 +38,5 @@ module Indicator
 
   def set_date timestamp
     @current = datapoint(timestamp)
-  end
-
-  private
-
-  def find_start_date
-    result.each do |datapoint|
-      return datapoint.date if self.class.attributes.map{ |x| datapoint.send x }.compact.length == self.class.attributes.length
-    end
   end
 end

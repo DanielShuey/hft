@@ -27,11 +27,10 @@ class Object
   end
 end
 
-# Logger
-
+# Loggers
+`touch #{File.join(Config.root, 'temp', 'history.txt')}`
 def history msg
-  file = File.join(Config.root, 'temp', 'history.txt')
-  `echo '#{msg}' >> #{file}`
+  `echo '#{msg}' >> #{File.join(Config.root, 'temp', 'history.txt')}`
 end
 
 # Make Temp Directories

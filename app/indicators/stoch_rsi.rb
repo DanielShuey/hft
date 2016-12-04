@@ -1,8 +1,6 @@
 class StochRsi
   include Indicator
 
-  attr_reader :result, :start_date, :current
-
   attributes *%i(rsi stoch_rsi change gain loss average_gain average_loss sma)
 
   dataset do
