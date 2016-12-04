@@ -2,11 +2,20 @@ require 'openssl'
 require "addressable/uri"
 require 'bigdecimal'
 require 'bigdecimal/util'
+require 'yaml'
 
 class Config
   class << self
     def root
       File.expand_path('../../', __FILE__)
+    end
+
+    YAML.load_file(File.join(Config.root, 'temp', 'config.yml')).each do |k, v|
+      define_method(k) { v }
+    end
+
+    def currency_pair
+      "BTC_#{currency.to_s.upcase}"
     end
   end
 end

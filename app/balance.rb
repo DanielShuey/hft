@@ -6,7 +6,7 @@ class Balance
     end
 
     def starting_btc
-      BigDecimal.new(starting['XMR']["btcValue"]) + BigDecimal.new(starting['BTC']['btcValue'])
+      BigDecimal.new(starting[Config.currency.upcase]["btcValue"]) + BigDecimal.new(starting['BTC']['btcValue'])
     end
 
     def available currency
@@ -14,7 +14,7 @@ class Balance
     end
 
     def estimated_btc
-      BigDecimal.new(balance['XMR']["btcValue"]) + BigDecimal.new(balance['BTC']['btcValue'])
+      BigDecimal.new(balance[Config.currency.upcase]["btcValue"]) + BigDecimal.new(balance['BTC']['btcValue'])
     end
     
     def estimated_profit

@@ -1,23 +1,12 @@
 class Poloniex
   class << self
-    TEST_SECRET = '94aa9905a27b19c4d4c1a8dae9710b50e9ff452cdd386cc8c6836afe6fad8fda13a3fd04e0cbb2c2fde2a62733452727fba4f227d173110817792368eda13629'
-    TEST_API_KEY = '74FVB4RQ-CRM3THOF-KCH4A1SH-M8NXNXSK'
-    
     class API
       include HTTParty
       # debug_output $stdout # Debugging to Stdout
       base_uri 'https://poloniex.com/'
     end
 
-    def production_mode toggle
-      if toggle
-      else
-        @api_key = TEST_API_KEY
-        @secret = TEST_SECRET
-      end
-    end
-
-    def chart_data currency_pair:, start:, period:, finish: current_time
+    def chart_data currency_pair: Config.currency_pair, start:, period:, finish: current_time
       get 'returnChartData', { currencyPair: currency_pair, start: start, end: finish, period: get_period(period) }
     end
   
@@ -29,19 +18,19 @@ class Poloniex
       post 'returnCompleteBalances'
     end
 
-    def buy currency_pair:, rate:, amount:
-      post 'buy', currencyPair: currency_pair, rate: rate, amount: amount, immediateOrCancel: 1
+    def buy rate:, amount:
+      post 'buy', currencyPair: Config.currency_pair, rate: rate, amount: amount, immediateOrCancel: 1
     end
 
-    def sell currency_pair:, rate:, amount:
-      post 'sell', currencyPair: currency_pair, rate: rate, amount: amount, immediateOrCancel: 1
+    def sell rate:, amount:
+      post 'sell', currencyPair: Config.currency_pair, rate: rate, amount: amount, immediateOrCancel: 1
     end
 
     private
 
     def post command, **params
       query = { command: command, nonce: nonce }.merge(params)
-      API.post "/tradingApi", { body: Addressable::URI.form_encode(query), headers: { 'Key' => @api_key, 'Sign' => sign(query) } }
+      API.post "/tradingApi", { body: Addressable::URI.form_encode(query), headers: { 'Key' => Config.api_key, 'Sign' => sign(query) } }
     end
 
     def get command, **params
@@ -53,7 +42,7 @@ class Poloniex
     end
 
     def sign data
-      OpenSSL::HMAC.hexdigest 'sha512', @secret, Addressable::URI.form_encode(data)
+      OpenSSL::HMAC.hexdigest 'sha512', Config.secret, Addressable::URI.form_encode(data)
     end
 
     def current_time
@@ -72,6 +61,4 @@ class Poloniex
       return periods[arg]
     end
   end
-
-  production_mode false
 end

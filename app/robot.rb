@@ -2,13 +2,12 @@ class Robot
   class << self
     attr_accessor :dataset, :currency
 
-    def run currency
+    def run
       Rufus::Scheduler.new.tap { |s| s.every('3m') { perform currency } }.join
     end
 
-    def perform currency
+    def perform
       puts "Robot Scan : #{Time.now}"
-      @currency = currency
       update
       scan
     end
@@ -16,14 +15,14 @@ class Robot
     private
 
     def update
-      ChartData.update currency_pair
+      ChartData.update
       Balance.update
       Ticker.update
     end
 
     def scan
       PoloniexSimple.new.tap do |x|
-        x.dataset ChartData.read(currency_pair)
+        x.dataset ChartData.read
 
         buy  if buying?  && x.buy?
         sell if selling? && x.sell?
@@ -31,9 +30,11 @@ class Robot
         history(
           x.log.merge({ 
             :btc         => Balance.available(:btc), 
-            currency     => Balance.available(currency),
-            :highest_bid => Ticker.highest_bid(currency_pair),
-            :lowest_ask  => Ticker.lowest_ask(currency_pair)
+            currency     => Balance.available(Config.currency),
+            :highest_bid => Ticker.highest_bid,
+            :lowest_ask  => Ticker.lowest_ask,
+            :buy         => buying?  && x.buy?,
+            :sell        => selling? && x.sell?
           }).to_json
         )
       end
@@ -41,24 +42,20 @@ class Robot
 
     def buy
       puts "Robot Buy"
-      puts Poloniex.buy currency_pair: currency_pair, rate: Ticker.lowest_ask(currency_pair), amount: Balance.available(:btc) * (1/Ticker.lowest_ask(currency_pair))
+      puts Poloniex.buy rate: Ticker.lowest_ask, amount: Balance.available(:btc) * (1/Ticker.lowest_ask)
     end
 
     def sell
       puts "Robot Sell"
-      puts Poloniex.sell currency_pair: currency_pair, rate: Ticker.highest_bid(currency_pair), amount: Balance.available(@currency)
-    end
-
-    def currency_pair
-      "BTC_#{currency.to_s.upcase}"
+      puts Poloniex.sell rate: Ticker.highest_bid, amount: Balance.available(Config.currency)
     end
 
     def buying?
-      Balance.available(:btc) > 0
+      Balance.available(:btc) > 0.002
     end
 
     def selling?
-      Balance.available(currency) > 0
+      Balance.available(Config.currency) > 0.2
     end
   end
 end

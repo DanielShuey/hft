@@ -10,11 +10,11 @@ Bundler.require(:default)
 require 'config/boot.rb'
 
 task :run_robot do
-  Robot.run :xmr
+  Robot.run
 end
 
 task :run_robot_once do
-  Robot.perform :xmr
+  Robot.perform
 end
 
 task :update_trade_history do

@@ -5,12 +5,12 @@ class Ticker
       @json = read
     end
 
-    def highest_bid currency_pair
-      BigDecimal.new(json[currency_pair]['highestBid'])
+    def highest_bid
+      BigDecimal.new(json[Config.currency_pair]['highestBid'])
     end    
 
-    def lowest_ask currency_pair
-      BigDecimal.new(json[currency_pair]['lowestAsk'])
+    def lowest_ask
+      BigDecimal.new(json[Config.currency_pair]['lowestAsk'])
     end    
 
     private
