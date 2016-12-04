@@ -3,16 +3,12 @@ class Pressure
 
   attr_reader :result, :start_date, :current
 
-  attributes *%i(pressure normal direction positive negative ratio index)
+  attributes *%i(pressure direction normalized_pressure)
 
   dataset do
     pressure
     direction
-    positive
-    negative
     normalize
-    ratio
-    index
   end
 
   def initialize
@@ -20,11 +16,11 @@ class Pressure
   end
 
   def uptrend?
-    current.normal >= 0.5 if current.normal
+    current.normalized_pressure >= 0.5 if current.normalized_pressure
   end
 
   def downtrend?
-    current.normal <= -0.5 if current.normal
+    current.normalized_pressure <= -0.5 if current.normalized_pressure
   end
 
   def js_dump
@@ -49,36 +45,7 @@ class Pressure
 
   def normalize
     result.each_cons(@period) do |x|
-      next unless x.first.positive
-      datapoint(x.last.date).normal = (x[-3..-1].map(&:pressure).ema / x.map(&:pressure).max) * x.last.direction
-    end
-  end
-
-  def positive
-    result.each do |x|
-      next unless x.pressure && x.direction
-      datapoint(x.date).positive = x.direction == 1 ? x.pressure : 1
-    end
-  end
-
-  def negative
-    result.each do |x|
-      next unless x.pressure && x.direction
-      datapoint(x.date).negative = x.direction == -1 ? x.pressure : 1
-    end
-  end
-
-  def ratio
-    result.each_cons(@period) do |x|
-      next unless x.first.positive
-      datapoint(x.last.date).ratio = x.sum(&:positive) / x.sum(&:negative)
-    end
-  end
-
-  def index
-    result.each do |x|
-      next unless x.ratio
-      datapoint(x.date).index = 100 - (100/(1 + x.ratio))
+      datapoint(x.last.date).normalized_pressure = (x[-3..-1].map(&:pressure).ema / x.map(&:pressure).max) * x.last.direction
     end
   end
 end

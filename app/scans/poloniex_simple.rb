@@ -2,7 +2,7 @@ class PoloniexSimple
   def initialize
     @indicators = []
     @ema = Ema.new
-    @stoch_rsi = StochRsi.new
+    @pressure = Pressure.new
     @indicators += [@ema, @pressure]
   end
 
@@ -24,5 +24,9 @@ class PoloniexSimple
 
   def js_dump
     @indicators.map(&:js_dump).join("\n")
+  end
+
+  def log
+    @indicators.map { |x| x.current.to_h }.reduce(&:merge)
   end
 end

@@ -27,6 +27,13 @@ class Object
   end
 end
 
+# Logger
+
+def history msg
+  file = File.join(Config.root, 'temp', 'history.txt')
+  `echo '#{msg}' >> #{file}`
+end
+
 # Make Temp Directories
 
 require 'fileutils'

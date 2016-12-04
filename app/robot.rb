@@ -29,6 +29,8 @@ class Robot
 
         buy  if buying?  && x.buy?
         sell if selling? && x.sell?
+
+        history x.log.to_json
       end
     end
 

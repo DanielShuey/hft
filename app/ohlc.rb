@@ -15,5 +15,9 @@ class Ohlc
     end.to_h
   end
 
+  def to_h
+    context
+  end
+
   attributes *%i(open high low close volume quote_volume weighted_average date)
 end
