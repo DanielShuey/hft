@@ -3,11 +3,13 @@ class Ema
 
   attr_reader :long_period, :short_period
 
-  attributes *%i(long short)
+  attributes *%i(long short trend crossover)
 
   dataset do
     long
     short
+    trends
+    crossovers
   end
  
   def initialize
@@ -16,15 +18,19 @@ class Ema
   end
 
   def uptrend?
-    if current.short && current.long
-      current.short / current.long > 1
-    end
+    current.trend == :up
   end
 
   def downtrend?
-    if current.short && current.long
-      current.short / current.long < 1
-    end
+    current.trend == :down
+  end
+
+  def positive_crossover?
+    current.crossover == :up
+  end
+
+  def negative_crossover?
+    current.crossover == :down
   end
 
   def js_dump
@@ -39,6 +45,28 @@ class Ema
   end
 
   private
+
+  def trends
+    result.each do |x|
+      next unless x.short && x.long
+      datapoint(x.date).trend = (x.short / x.long) >= 1 ? :up : :down
+    end
+  end
+
+  def crossovers
+    result.each_cons(2) do |x|
+      next unless x.first.trend
+      if x.first.trend == :up && x.last.trend == :down
+        datapoint(x.last.date).crossover = :down
+      end
+      if x.first.trend == :down && x.last.trend == :up
+        datapoint(x.last.date).crossover = :up
+      end
+      if x.first.trend == x.last.trend
+        datapoint(x.last.date).crossover = :none
+      end
+    end
+  end
 
   def long
     result.each_cons(long_period) do |x|

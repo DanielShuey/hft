@@ -4,8 +4,8 @@ class DemoScan
     @ema = Ema.new
     @pressure = Pressure.new
     @stoch_rsi = StochRsi.new
-    @cmf = ChaikinMoneyFlow.new
-    @indicators += [@ema, @pressure, @stoch_rsi, @cmf]
+    @volume_ratio = VolumeRatio.new
+    @indicators += [@ema, @pressure, @stoch_rsi, @volume_ratio]
   end
 
   def dataset dataset

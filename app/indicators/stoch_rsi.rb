@@ -74,7 +74,8 @@ class StochRsi
 
   def rsi
     result.each do |x|
-      next unless x.average_gain
+      next unless x.average_gain && x.average_loss
+
       rs = x.average_gain / x.average_loss
       datapoint(x.date).rsi = 100 - (100 / (1 + rs))
     end

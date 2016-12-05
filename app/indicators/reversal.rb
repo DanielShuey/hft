@@ -1,4 +1,4 @@
-class Pressure
+class Reversal
   include Indicator
 
   attributes *%i(pressure direction normalized_pressure)
@@ -14,11 +14,11 @@ class Pressure
   end
 
   def uptrend?
-    current.normalized_pressure >= 0.5 if current.normalized_pressure
+    current.normalized_pressure >= 0.2 if current.normalized_pressure
   end
 
   def downtrend?
-    current.normalized_pressure <= -0.5 if current.normalized_pressure
+    current.normalized_pressure <= -0.2 if current.normalized_pressure
   end
 
   def js_dump
