@@ -6,8 +6,12 @@ class Robot
       Rufus::Scheduler.new.tap { |s| s.every('5m') { perform } }.join
     end
 
+    def scan
+      @scan ||= RsiCombo.new
+    end
+
     def perform
-      puts "Robot Scan : #{Time.now}"
+      puts "Robot Scan : #{scan.class.name} : #{Time.now}"
       update
       scan
     end
@@ -20,8 +24,8 @@ class Robot
       Ticker.update
     end
 
-    def scan
-      RsiCombo.new.tap do |x|
+    def run_scan
+      scan.tap do |x|
         x.dataset ChartData.read
 
         buy  if buying?  && x.buy?
