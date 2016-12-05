@@ -3,7 +3,7 @@ class Robot
     attr_accessor :dataset
 
     def run
-      Rufus::Scheduler.new.tap { |s| s.every('3m') { perform } }.join
+      Rufus::Scheduler.new.tap { |s| s.every('5m') { perform } }.join
     end
 
     def perform
@@ -21,7 +21,7 @@ class Robot
     end
 
     def scan
-      PoloniexSimple.new.tap do |x|
+      RsiCombo.new.tap do |x|
         x.dataset ChartData.read
 
         buy  if buying?  && x.buy?
