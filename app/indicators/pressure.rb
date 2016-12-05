@@ -9,8 +9,12 @@ class Pressure
     normalize
   end
 
-  def initialize
-    @period = 30
+  def initialize period: 30
+    @period = period
+  end
+
+  def value
+    current.pressure
   end
 
   def uptrend?

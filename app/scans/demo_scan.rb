@@ -13,11 +13,11 @@ class DemoScan
   end
 
   def buy?
-    @pressure.uptrend?
+    @pressure.uptrend? && @ema.uptrend?
   end
 
   def sell?
-    @ema.negative_crossover? || @stoch_rsi.overbought?
+    @pressure.downtrend?
   end
 
   def set_date timestamp
