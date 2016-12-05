@@ -3,18 +3,23 @@ class Ema
 
   attr_reader :long_period, :short_period
 
-  attributes *%i(long short trend crossover)
+  attributes *%i(long short trend crossover ema_ratio)
 
   dataset do
-    long
-    short
+    longs
+    shorts
+    ema_ratio
     trends
     crossovers
   end
  
-  def initialize
-    @short_period = 5
-    @long_period = 20
+  def initialize long: 20, short: 5
+    @short_period = short
+    @long_period = long
+  end
+
+  def value
+    current.ema_ratio
   end
 
   def uptrend?
@@ -46,10 +51,17 @@ class Ema
 
   private
 
-  def trends
+  def ema_ratio
     result.each do |x|
       next unless x.short && x.long
-      datapoint(x.date).trend = (x.short / x.long) >= 1 ? :up : :down
+      datapoint(x.date).ema_ratio = x.short / x.long
+    end
+  end
+
+  def trends
+    result.each do |x|
+      next unless x.ema_ratio
+      datapoint(x.date).trend = x.ema_ratio >= 1 ? :up : :down
     end
   end
 
@@ -68,13 +80,13 @@ class Ema
     end
   end
 
-  def long
+  def longs
     result.each_cons(long_period) do |x|
       datapoint(x.last.date).long = x.map(&:weighted_average).sma
     end
   end
 
-  def short
+  def shorts
     result.each_cons(short_period) do |x|
       datapoint(x.last.date).short = x.map(&:weighted_average).ema
     end

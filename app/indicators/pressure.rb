@@ -14,7 +14,7 @@ class Pressure
   end
 
   def value
-    current.pressure
+    current.normalized_pressure
   end
 
   def uptrend?

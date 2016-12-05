@@ -1,6 +1,6 @@
 ruby:
-  sim = Simulator.new filename: 'BTC_GAME-336hrs-15mins', btc: 0.2
-  sim.apply RsiCombo.new
+  sim = Simulator.new filename: 'BTC_GAME-1000hrs-15mins', btc: 0.2
+  sim.apply RsiMeanReversion.new
   sim.perform
 
 script type="text/javascript"

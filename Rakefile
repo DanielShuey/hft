@@ -30,7 +30,7 @@ task :update_current do
 end
  
 task :update_historic do
-  ChartData.update_historic currency_pair: 'BTC_GAME', rewind: 336, period: '15mins'
+  ChartData.update_historic currency_pair: 'BTC_GAME', rewind: 1000, period: '15mins'
 end
 
 task :run_simulation do

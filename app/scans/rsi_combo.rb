@@ -1,9 +1,9 @@
-class RsiCombo
+class RsiCombo 
   def initialize
     @indicators = []
-    @pressure = Pressure.new period: 14
+    @sma = SimpleMovingAverage.new period: 1000
     @rsi = RelativeStrengthIndex.new period: 14
-    @indicators += [@pressure, @rsi]
+    @indicators += [@rsi, @sma]
   end
 
   def dataset dataset
@@ -11,15 +11,17 @@ class RsiCombo
   end
 
   def buy?
-    return unless @pressure.value && @rsi.value
-    
-    @rsi.value < 25 || @pressure.value > 0.5
+    return unless @rsi.value && @sma.value
+
+    if @sma.current.weighted_average > @sma.value
+      @rsi.value < 25
+    end
   end
 
   def sell?
-    return unless @pressure.value && @rsi.value
+    return unless @rsi.value && @sma.value
 
-    @rsi.value > 55
+    return @rsi.value > 55
   end
 
   def set_date timestamp

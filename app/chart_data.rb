@@ -1,7 +1,7 @@
 class ChartData
   class << self
     def update
-      Poloniex.chart_data(currency_pair: Config.currency_pair, start: backtrack(8), period: '15mins').tap do |response|
+      Poloniex.chart_data(currency_pair: Config.currency_pair, start: backtrack(336), period: '15mins').tap do |response|
         File.open(File.join(Config.root, 'temp', 'responses', "chart_#{Config.currency_pair}.json"), 'w') { |f| f.write(response.body) }
       end
     end
@@ -10,6 +10,7 @@ class ChartData
       Poloniex.chart_data(currency_pair: currency_pair, start: backtrack(rewind), period: period).tap do |response|
         File.open(File.join(Config.root, 'assets', 'history', "#{currency_pair}-#{rewind}hrs-#{period}.json"), 'w') { |f| f.write(response.body) }
       end
+
     end
 
     def historic filename

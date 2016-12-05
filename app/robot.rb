@@ -7,13 +7,13 @@ class Robot
     end
 
     def scan
-      @scan ||= RsiCombo.new
+      @scan ||= RsiMeanReversion.new
     end
 
     def perform
       puts "Robot Scan : #{scan.class.name} : #{Time.now}"
       update
-      scan
+      run_scan
     end
 
     private

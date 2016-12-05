@@ -1,9 +1,9 @@
-class RsiMeanReversion
+class RsiMeanReversion 
   def initialize
     @indicators = []
-    @sma = SimpleMovingAverage.new period: 200
+    @sma = SimpleMovingAverage.new period: 1000
     @rsi = RelativeStrengthIndex.new period: 14
-    @indicators += [@sma, @rsi]
+    @indicators += [@rsi, @sma]
   end
 
   def dataset dataset
@@ -11,17 +11,17 @@ class RsiMeanReversion
   end
 
   def buy?
-    return unless @sma.value && @rsi.value
+    return unless @rsi.value && @sma.value
 
-    #if @sma.current.weighted_average > @sma.value
+    if @sma.current.weighted_average > @sma.value
       @rsi.value < 25
-    #end
+    end
   end
 
   def sell?
-    return unless @sma.value && @rsi.value
+    return unless @rsi.value && @sma.value
 
-    @rsi.value > 55
+    return @rsi.value > 55
   end
 
   def set_date timestamp
