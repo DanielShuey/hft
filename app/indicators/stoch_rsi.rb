@@ -76,8 +76,15 @@ class StochRsi
     result.each do |x|
       next unless x.average_gain && x.average_loss
 
-      rs = x.average_gain / x.average_loss
-      datapoint(x.date).rsi = 100 - (100 / (1 + rs))
+      if x.average_loss == 0
+        datapoint(x.date).rsi = 100
+      elsif x.average_gain == 0
+        datapoint(x.date).rsi = 0
+      else
+        rs = x.average_gain / x.average_loss
+        datapoint(x.date).rsi = 100 - (100 / (1 + rs))
+      end
+
     end
   end
 
