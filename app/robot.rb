@@ -42,7 +42,7 @@ class Robot
 
     def buy
       puts "Robot Buy"
-      puts Poloniex.buy rate: Ticker.lowest_ask, amount: Balance.available(:btc) * (1/Ticker.lowest_ask)
+      puts Poloniex.buy rate: Ticker.lowest_ask, amount: convert_to_btc
     end
 
     def sell
@@ -50,12 +50,16 @@ class Robot
       puts Poloniex.sell rate: Ticker.highest_bid, amount: Balance.available(Config.currency)
     end
 
+    def convert_to_btc
+      Balance.available(:btc) * (1/Ticker.lowest_ask)
+    end
+
     def buying?
-      Balance.available(:btc) > 0.002
+      Balance.available(:btc) > 0.001
     end
 
     def selling?
-      Balance.available(Config.currency) > 0.2
+      convert_to_btc > 0.001
     end
   end
 end
