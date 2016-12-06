@@ -11,17 +11,13 @@ class SimpleMovingAverage
     @period = period
   end
 
-  def value
-    current.moving_average
-  end
-
   def js_dump
     def dump result, method
       "{ x: new Date(#{result.date * 1000}), y: #{result.send method} }" if result.send method
     end
 
     [
-      "window.long_data = [" + result.map { |x| dump x, :moving_average }.compact.join(',') + "];",
+      "window.moving_average_data = [" + result.map { |x| dump x, :moving_average }.compact.join(',') + "];",
     ].join("\n")
   end
 

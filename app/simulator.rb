@@ -24,16 +24,16 @@ class Simulator
     amount = currency_btc * (1.to_d / current.weighted_average)
     @currency_other = amount - fee(amount)
     @currency_btc = 0
-    @transactions << { date: current.date, type: :buy, price: current.weighted_average, amount: @currency_other }
-    @fees += fee(currency_btc)
+    @transactions << { date: current.date, type: :buy, price: current.weighted_average.round(5).to_f, amount: @currency_other.round(5).to_f }
+    @fees += fee(currency_btc).round(5)
   end
 
   def sell
     amount = currency_other * current.weighted_average
     @currency_other = 0
     @currency_btc = amount - fee(amount)
-    @transactions << { date: current.date, type: :sell, price: current.weighted_average, amount: @currency_btc, profit: currency_btc - @last_btc, gain: (1-(@last_btc/currency_btc))*100 }
-    @fees += fee(amount)
+    @transactions << { date: current.date, type: :sell, price: current.weighted_average.round(5).to_f, amount: @currency_btc.round(5).to_f, profit: (currency_btc - @last_btc).round(5).to_f, gain: ((1-(@last_btc/currency_btc))*100).round(5).to_f }
+    @fees += fee(amount).round(5)
   end
 
   def profit

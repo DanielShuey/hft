@@ -1,41 +1,23 @@
-class Ema
+class ExponentialMovingAverage
   include Indicator
 
-  attr_reader :long_period, :short_period
+  attr_reader :long_period, :short_period, :double
 
-  attributes *%i(long short trend crossover ema_ratio)
+  attributes *%i(long short ema trend ema_ratio crossover)
 
   dataset do
-    longs
-    shorts
+    long
+    ema
+    short
     ema_ratio
     trends
     crossovers
   end
  
-  def initialize long: 20, short: 5
+  def initialize long:, short:, double:
     @short_period = short
     @long_period = long
-  end
-
-  def value
-    current.ema_ratio
-  end
-
-  def uptrend?
-    current.trend == :up
-  end
-
-  def downtrend?
-    current.trend == :down
-  end
-
-  def positive_crossover?
-    current.crossover == :up
-  end
-
-  def negative_crossover?
-    current.crossover == :down
+    @double = double
   end
 
   def js_dump
@@ -80,15 +62,29 @@ class Ema
     end
   end
 
-  def longs
+  def long
     result.each_cons(long_period) do |x|
       datapoint(x.last.date).long = x.map(&:weighted_average).sma
     end
   end
 
-  def shorts
+  def ema
     result.each_cons(short_period) do |x|
-      datapoint(x.last.date).short = x.map(&:weighted_average).ema
+      datapoint(x.last.date).ema = x.map(&:weighted_average).ema
+    end
+  end
+
+  def short
+    if double == true
+      result.each_cons(short_period) do |x|
+        next unless x.first.ema
+        datapoint(x.last.date).short = (2 * x.last.ema) - x.map(&:ema).ema
+      end
+    else
+      result.each do |x|
+       next unless x.ema
+       datapoint(x.date).short = x.ema 
+     end
     end
   end
 end

@@ -1,5 +1,5 @@
 ruby:
-  sim = Simulator.new filename: 'BTC_GAME-1000hrs-15mins', btc: 0.2
+  sim = Simulator.new filename: 'BTC_XMR-1000hrs-15mins', btc: 0.2
   sim.apply RsiMeanReversion.new
   sim.perform
 
@@ -30,9 +30,9 @@ script type="text/javascript"
 
 .row
   div id="moving-average" style="height: 260px; width: 100%;"
+  div id="rsi" style="height: 260px; width: 100%;"
   div id="pressure" style="height: 260px; width: 100%;"
   div id="volume_ratio" style="height: 260px; width: 100%;"
-  div id="stoch-rsi" style="height: 260px; width: 100%;"
 
 coffee:
   create_chart = (name, data) ->
@@ -86,25 +86,25 @@ coffee:
           dataPoints: @average_data
         },
         {
-          name: 'Long'
+          name: 'Moving Average'
           type: 'spline'
           color: '#2c97de'
+          markerType: 'none'
+          dataPoints: @moving_average_data
+        },
+        {
+          name: 'Long'
+          type: 'spline'
+          color: '#60BD68'
           markerType: 'none'
           dataPoints: @long_data
         },
         {
           name: 'Short'
           type: 'spline'
-          color: '#60BD68'
-          markerType: 'none'
-          dataPoints: @short_data
-        },
-        {
-          name: 'Dema'
-          type: 'spline'
           color: '#FAA43A'
           markerType: 'none'
-          dataPoints: @dema_data
+          dataPoints: @short_data
         },
         {
           name: 'Buy'
@@ -172,10 +172,10 @@ coffee:
     )
     volume_ratio.render()
 
-    stoch_rsi = create_chart('stoch-rsi', 
+    rsi = create_chart('rsi', 
       [
         {
-          name: 'Stoch RSI'
+          name: 'RSI'
           type: 'spline'
           color: '#FAA43A'
           markerType: 'none'
@@ -195,4 +195,4 @@ coffee:
         }
       ]
     )
-    stoch_rsi.render()
+    rsi.render()

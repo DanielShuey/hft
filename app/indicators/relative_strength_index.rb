@@ -1,7 +1,7 @@
 class RelativeStrengthIndex
   include Indicator
 
-  attributes *%i(rsi change gain loss average_gain average_loss)
+  attributes *%i(cumulative_rsi rsi change gain loss average_gain average_loss)
 
   dataset do
     changes
@@ -10,14 +10,11 @@ class RelativeStrengthIndex
     average_gains
     average_losses
     rsi
+    cumulative
   end
 
   def initialize period:
     @period = period
-  end
-
-  def value
-    current.rsi
   end
 
   def js_dump
@@ -79,6 +76,13 @@ class RelativeStrengthIndex
         datapoint(x.date).rsi = 100 - (100 / (1 + rs))
       end
 
+    end
+  end
+
+  def cumulative
+    result.each_cons(2) do |x|
+      next unless x.first.rsi
+      datapoint(x.last.date).cumulative_rsi = x.map(&:loss).sum / @period
     end
   end
 end

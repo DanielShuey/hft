@@ -1,38 +1,22 @@
 class RsiMeanReversion 
-  def initialize
-    @indicators = []
-    @sma = SimpleMovingAverage.new period: 1000
-    @rsi = RelativeStrengthIndex.new period: 14
-    @indicators += [@rsi, @sma]
-  end
+  include Scan
 
-  def dataset dataset
-    @indicators.each { |x| x.dataset dataset }
-  end
+  indicators(
+    RelativeStrengthIndex.new(period: 14),
+    ExponentialMovingAverage.new(long: 1000, short: 250, double: true)
+  )
 
   def buy?
-    return unless @rsi.value && @sma.value
+    return unless relative_strength_index.rsi && exponential_moving_average.trend
 
-    if @sma.current.weighted_average > @sma.value
-      @rsi.value < 25
+    if exponential_moving_average.trend == :up
+      return relative_strength_index.rsi < 25
     end
   end
 
   def sell?
-    return unless @rsi.value && @sma.value
+    return unless relative_strength_index.rsi && exponential_moving_average.trend
 
-    return @rsi.value > 55
-  end
-
-  def set_date timestamp
-    @indicators.each { |x| x.set_date timestamp }
-  end
-
-  def js_dump
-    @indicators.map(&:js_dump).join("\n")
-  end
-
-  def log
-    @indicators.map { |x| x.current.to_h }.reduce(&:merge)
+    relative_strength_index.rsi > 55
   end
 end

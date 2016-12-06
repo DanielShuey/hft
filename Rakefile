@@ -30,16 +30,16 @@ task :update_current do
 end
  
 task :update_historic do
-  ChartData.update_historic currency_pair: 'BTC_GAME', rewind: 1000, period: '15mins'
+  ChartData.update_historic currency_pair: 'BTC_XMR', rewind: 500, period: '15mins'
 end
 
 task :run_simulation do
-  sim = Simulator.new filename: 'BTC_GAME-48hrs-5mins.json', btc: 0.2
+  sim = Simulator.new filename: 'BTC_XMR-500hrs-15mins', btc: 0.2
   sim.apply DemoScan.new
   sim.perform
   puts sim.transactions
-  puts "Start: #{sim.btc} | End: #{sim.currency_btc}"
-  puts "Profit: #{sim.profit}"
-  puts "Gain: #{sim.gain}"
-  puts "Fees: #{sim.fees}"
+  puts "Start: #{sim.btc.round(5)} | End: #{sim.currency_btc.round(5)}"
+  puts "Profit: #{sim.profit.round(5)}"
+  puts "Gain: #{sim.gain.round(5)}"
+  puts "Fees: #{sim.fees.round(5)}"
 end
