@@ -1,13 +1,11 @@
 class MovingAverageScan
   include Scan
 
-  indicator :threshold, SimpleMovingAverage.new(period: 1000)
+  indicator :threshold, SimpleMovingAverage.new(period: 672)
   indicator :ema,       ExponentialMovingAverage.new(long: 200, short: 50, double: true)
 
   buy do
-    if ema.long > threshold.moving_average
-      ema.trend == :up
-    end
+    ema.short > threshold.moving_average && ema.trend == :up
   end
 
   sell do
