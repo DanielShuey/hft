@@ -30,11 +30,11 @@ task :update_current do
 end
  
 task :update_historic do
-  ChartData.update_historic currency_pair: 'BTC_XMR', rewind: 500, period: '15mins'
+  ChartData.update_historic currency_pair: 'BTC_ETH', rewind: 500, period: '15mins'
 end
 
 task :run_simulation do
-  sim = Simulator.new filename: 'BTC_XMR-500hrs-15mins', btc: 0.2
+  sim = Simulator.new filename: 'BTC_ETH-500hrs-15mins', btc: 0.2
   sim.apply DemoScan.new
   sim.perform
   puts sim.transactions

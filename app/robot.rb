@@ -7,11 +7,11 @@ class Robot
     end
 
     def scan
-      @scan ||= RsiMeanReversion.new
+      @scan ||= MovingAverageScan.new
     end
 
     def perform
-      puts "Robot Scan : #{scan.class.name} : #{Time.now}"
+      puts "Robot Scan : #{Config.currency_pair} : #{scan.class.name} : #{Time.now}"
       update
       run_scan
     end

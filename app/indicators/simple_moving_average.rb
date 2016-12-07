@@ -4,7 +4,7 @@ class SimpleMovingAverage
   attributes *%i(moving_average)
 
   dataset do
-    moving_average
+    moving_averages
   end
  
   def initialize period:
@@ -23,7 +23,7 @@ class SimpleMovingAverage
 
   private
 
-  def moving_average
+  def moving_averages
     result.each_cons(@period) do |x|
       datapoint(x.last.date).moving_average = x.map(&:weighted_average).sma
     end

@@ -9,20 +9,8 @@ class Pressure
     normalize
   end
 
-  def initialize period: 30
+  def initialize period:
     @period = period
-  end
-
-  def value
-    current.normalized_pressure
-  end
-
-  def uptrend?
-    current.normalized_pressure >= 0.5 if current.normalized_pressure
-  end
-
-  def downtrend?
-    current.normalized_pressure <= -0.5 if current.normalized_pressure
   end
 
   def js_dump
@@ -38,7 +26,7 @@ class Pressure
   private
 
   def pressure
-    result.each { |x| datapoint(x.date).pressure = (x.high - x.low) * x.quote_volume }
+    result.each { |x| datapoint(x.date).pressure = (x.open - x.close).abs * x.quote_volume }
   end
 
   def direction

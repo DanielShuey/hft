@@ -23,6 +23,7 @@ gem 'bson_ext'
 # Webserver
 
 group :webserver do
+  gem 'thin'
   gem 'rack'
   gem 'sinatra'
   gem 'sinatra-contrib'

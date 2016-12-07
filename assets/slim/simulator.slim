@@ -1,6 +1,6 @@
 ruby:
-  sim = Simulator.new filename: 'BTC_XMR-1000hrs-15mins', btc: 0.2
-  sim.apply RsiMeanReversion.new
+  sim = Simulator.new filename: 'BTC_ETH-500hrs-15mins', btc: 0.2
+  sim.apply MovingAverageScan.new
   sim.perform
 
 script type="text/javascript"

@@ -6,17 +6,13 @@ class RsiMeanReversion
     ExponentialMovingAverage.new(long: 1000, short: 250, double: true)
   )
 
-  def buy?
-    return unless relative_strength_index.rsi && exponential_moving_average.trend
-
+  buy do
     if exponential_moving_average.trend == :up
-      return relative_strength_index.rsi < 25
+      relative_strength_index.rsi < 25
     end
   end
 
-  def sell?
-    return unless relative_strength_index.rsi && exponential_moving_average.trend
-
+  sell do
     relative_strength_index.rsi > 55
   end
 end

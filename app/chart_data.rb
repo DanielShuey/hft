@@ -6,7 +6,7 @@ class ChartData
       end
     end
    
-    def update_historic currency_pair:, rewind: 24, period: '5mins'
+    def update_historic currency_pair:, rewind: 24, period: '15mins'
       Poloniex.chart_data(currency_pair: currency_pair, start: backtrack(rewind), period: period).tap do |response|
         File.open(File.join(Config.root, 'assets', 'history', "#{currency_pair}-#{rewind}hrs-#{period}.json"), 'w') { |f| f.write(response.body) }
       end

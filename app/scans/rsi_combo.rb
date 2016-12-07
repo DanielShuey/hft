@@ -1,22 +1,31 @@
-class RsiCombo 
+class RsiCombo
   include Scan
+
+  attr_accessor :type
 
   indicators(
     RelativeStrengthIndex.new(period: 14),
-    ExponentialMovingAverage.new(long: 1000, short: 250, double: false)
+    ExponentialMovingAverage.new(long: 1000, short: 250, double: true),
+    Pressure.new(period: 30)
   )
 
-  def buy?
-    return unless relative_strength_index.rsi && exponential_moving_average.trend
-
+  buy do
     if exponential_moving_average.trend == :up
-      return relative_strength_index.rsi < 25
+      if relative_strength_index.rsi < 25
+        @type = :rsi
+        true
+      elsif pressure.normalized_pressure >= 0.7
+        @type = :pressure
+        true
+      end
     end
   end
 
-  def sell?
-    return unless relative_strength_index.rsi && exponential_moving_average.trend
-
-    relative_strength_index.rsi > 55
+  sell do
+    if @type == :rsi
+      relative_strength_index.rsi > 55
+    elsif @type == :pressure
+      pressure.normalized_pressure <= -0.7
+    end
   end
 end
